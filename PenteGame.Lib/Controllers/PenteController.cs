@@ -12,40 +12,46 @@ namespace PenteGame.Lib.Controllers
         public event Action<PieceColor> Win;
         public event Action<PieceColor> Capture;
         private readonly IDictionary<Point, GamePiece> _board;
+        public PieceColor CurrentTurn { get; set; }
 
-        public void TakeTurn()
+        public void TakeTurn(Point placement)
         {
         }
 
-        public bool CheckVerticalCapture()
+        private bool CheckVerticalCapture()
         {
             return false;
         }
-        public bool CheckHorizontalCapture()
+
+        private bool CheckHorizontalCapture()
         {
             return false;
         }
-        public bool CheckVerticalTessara()
+
+        private bool CheckVerticalTessara()
         {
             return false;
         }
-        public bool CheckHorizontalTessara()
+
+        private bool CheckHorizontalTessara()
         {
             return false;
         }
-        public bool CheckVerticalTria()
+
+        private bool CheckVerticalTria()
         {
             return false;
         }
-        public bool CheckHorizontalTria()
+
+        private bool CheckHorizontalTria()
         {
             return false;
         }
-        public bool CheckVerticalWin()
+        private bool CheckVerticalWin()
         {
             return false;
         }
-        public bool CheckHorizontalWin()
+        private bool CheckHorizontalWin()
         {
             return false;
         }
