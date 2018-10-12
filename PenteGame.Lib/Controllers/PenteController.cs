@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PenteGame.Lib.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ namespace PenteGame.Lib.Controllers
 {
     public class PenteController
     {
+        private IDictionary<Point, GamePiece> _board;
         public void TakeTurn()
         {
         }
