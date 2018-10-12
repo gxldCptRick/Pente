@@ -27,7 +27,7 @@ namespace PenteGame.Lib.Controllers
         {
             return false;
         }
-        public Boolean CheckHorizontalTessara()
+        public bool CheckHorizontalTessara()
         {
             return false;
         }
