@@ -1,4 +1,5 @@
-﻿using PenteGame.Lib.Models;
+﻿using PenteGame.Lib.Enums;
+using PenteGame.Lib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,40 +10,44 @@ namespace PenteGame.Lib.Controllers
 {
     public class PenteController
     {
+        public event Action<PieceColor> Tessara;
+        public event Action<PieceColor> Tria;
+        public event Action<PieceColor> Win;
+        public event Action<PieceColor> Capture;
         private IDictionary<Point, GamePiece> _board;
         public void TakeTurn()
         {
         }
 
-        public Boolean CheckVerticalCapture()
+        private Boolean CheckVerticalCapture()
         {
             return false;
         }
-        public Boolean CheckHorizontalCapture()
+        private Boolean CheckHorizontalCapture()
         {
             return false;
         }
-        public Boolean CheckVerticalTessara()
+        private Boolean CheckVerticalTessara()
         {
             return false;
         }
-        public Boolean CheckHorizontalTessara()
+        private Boolean CheckHorizontalTessara()
         {
             return false;
         }
-        public Boolean CheckVerticalTria()
+        private Boolean CheckVerticalTria()
         {
             return false;
         }
-        public Boolean CheckHorizontalTria()
+        private Boolean CheckHorizontalTria()
         {
             return false;
         }
-        public Boolean CheckVerticalWin()
+        private Boolean CheckVerticalWin()
         {
             return false;
         }
-        public Boolean CheckHorizontalWin()
+        private Boolean CheckHorizontalWin()
         {
             return false;
         }

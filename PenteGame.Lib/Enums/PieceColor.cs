@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PenteGame.Lib.Enums
 {
-    enum PieceColor
+    public enum PieceColor
     {
         Black, 
         White
