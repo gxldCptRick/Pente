@@ -10,19 +10,20 @@ namespace PenteGame.Lib.Controllers
     public class PenteController
     {
         private IDictionary<Point, GamePiece> _board;
+
         public void TakeTurn()
         {
         }
 
-        public Boolean CheckVerticalCapture()
+        public bool CheckVerticalCapture()
         {
             return false;
         }
-        public Boolean CheckHorizontalCapture()
+        public bool CheckHorizontalCapture()
         {
             return false;
         }
-        public Boolean CheckVerticalTessara()
+        public bool CheckVerticalTessara()
         {
             return false;
         }
@@ -30,19 +31,19 @@ namespace PenteGame.Lib.Controllers
         {
             return false;
         }
-        public Boolean CheckVerticalTria()
+        public bool CheckVerticalTria()
         {
             return false;
         }
-        public Boolean CheckHorizontalTria()
+        public bool CheckHorizontalTria()
         {
             return false;
         }
-        public Boolean CheckVerticalWin()
+        public bool CheckVerticalWin()
         {
             return false;
         }
-        public Boolean CheckHorizontalWin()
+        public bool CheckHorizontalWin()
         {
             return false;
         }
