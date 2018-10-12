@@ -2,9 +2,6 @@
 using PenteGame.Lib.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PenteGame.Lib.Controllers
 {
@@ -14,13 +11,12 @@ namespace PenteGame.Lib.Controllers
         public event Action<PieceColor> Tria;
         public event Action<PieceColor> Win;
         public event Action<PieceColor> Capture;
-        private IDictionary<Point, GamePiece> _board;
+        private readonly IDictionary<Point, GamePiece> _board;
 
         public void TakeTurn()
         {
         }
 
-        private Boolean CheckVerticalCapture()
         public bool CheckVerticalCapture()
         {
             return false;
