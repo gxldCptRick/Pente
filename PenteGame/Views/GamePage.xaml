@@ -6,11 +6,15 @@
       xmlns:local="clr-namespace:PenteGame.Views"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
+      Loaded="Page_Loaded"
       Title="GamePage">
     <Grid Background="LightGray">
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition Height=".2*"/>
+            <RowDefinition Height=".8*"/>
+            <RowDefinition Height=".15*"/>
         </Grid.RowDefinitions>
+        <Canvas Grid.Row="1" Name="PieceGrid"/>
+        <UniformGrid Grid.Row="1" Name="GameGrid" Columns="19" Rows="19"/>
     </Grid>
 </Page>

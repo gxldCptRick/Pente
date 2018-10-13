@@ -26,6 +26,23 @@ namespace PenteGame.Views
             InitializeComponent();
         }
 
+        private void FillGrid()
+        {
+            var colorBrush = new BrushConverter().ConvertFromString("#87A885") as SolidColorBrush;
+            for (int i = 0; i < 19*19; i++)
+            {
+                var rect = new Rectangle();
+                rect.Stroke = colorBrush;
+                rect.MouseDown += (s, e) => MessageBox.Show($"Bonjour {e.GetPosition(this.GameGrid)}");
+                this.GameGrid.Children.Add(rect);
+            }
+        }
+
         public event Action<PageRequest> PageChangeRequested;
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            FillGrid();
+        }
     }
 }

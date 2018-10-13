@@ -59,6 +59,9 @@
       <DependentUpon>HelpfulWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="PageRequest.cs" />
+    <Compile Include="ViewModels\MainPageData.cs" />
+    <Compile Include="ViewModels\PlayerData.cs" />
+    <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\GamePage.xaml.cs">
       <DependentUpon>GamePage.xaml</DependentUpon>
     </Compile>
@@ -132,10 +135,16 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\GreyPiece.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\HowToPlay.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\main.css" />
+    <Content Include="Resources\PurplePiece.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PenteGame.Lib\PenteGame.Lib.csproj">
