@@ -16,8 +16,9 @@ namespace PenteGame.Lib.Controllers
         public PieceColor CurrentTurn { get; set; }
         public IEnumerable<GamePiece> Pieces { get => _board.Values; }
 
-        public void TakeTurn(Point placement)
+        public bool TakeTurn(Point placement, PieceColor color)
         {
+            return false;
         }
 
         private bool CheckVerticalCapture()
