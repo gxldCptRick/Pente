@@ -1,13 +1,14 @@
-﻿<Window x:Class="PenteGame.MainWindow"
+﻿<Window x:Class="PenteGame.HelpfulWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PenteGame"
         mc:Ignorable="d"
-        Title="Pente Beans" Foreground="MediumPurple" Height="450" Width="800">
+        Title="HelpfulWindow" Height="450" Width="800">
     <Grid>
-        <Frame Name="MainFrame" NavigationUIVisibility="Visible">
+        <Frame Name="BetterMainFrame">
+            
         </Frame>
     </Grid>
 </Window>

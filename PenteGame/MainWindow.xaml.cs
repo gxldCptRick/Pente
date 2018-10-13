@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PenteGame.Views;
+using PenteGame.Views.Intefaces;
+using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace PenteGame
 {
@@ -23,6 +14,36 @@ namespace PenteGame
         public MainWindow()
         {
             InitializeComponent();
+            ProccessPageRequest(PageRequest.Main);
+        }
+
+        private T GeneratePage<T>() where T : Page, IPageChanger, new()
+        {
+            var page = new T
+            {
+                DataContext = this.DataContext
+            };
+            page.PageChangeRequested += ProccessPageRequest;
+            return page;
+        }
+
+        private void ProccessPageRequest(PageRequest pageToGoTo)
+        {
+            switch (pageToGoTo)
+            {
+                case PageRequest.Main:
+                    MainFrame.Navigate(GeneratePage<MainPage>());
+                    break;
+                case PageRequest.Help:
+                    var window = new HelpfulWindow();
+                    window.Show();
+                    break;
+                case PageRequest.Game:
+                    MainFrame.Navigate(GeneratePage<GamePage>());
+                    break;
+                default:
+                    throw new ArgumentException("You picked an unsuportted PageRequest.", nameof(pageToGoTo));
+            }
         }
     }
 }
