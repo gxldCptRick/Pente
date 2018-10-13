@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PenteGame.Lib.Models
 {
-    struct Point
+    public struct Point
     {
         int x;
         int y;
