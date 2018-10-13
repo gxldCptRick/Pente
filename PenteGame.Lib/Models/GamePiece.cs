@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PenteGame.Lib.Models
 {
-    class GamePiece
+    public class GamePiece
     {
         Point point;
         string Color;

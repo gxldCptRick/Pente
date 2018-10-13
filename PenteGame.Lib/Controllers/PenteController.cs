@@ -12,7 +12,9 @@ namespace PenteGame.Lib.Controllers
         public event Action<PieceColor> Win;
         public event Action<PieceColor> Capture;
         private readonly IDictionary<Point, GamePiece> _board;
+
         public PieceColor CurrentTurn { get; set; }
+        public IEnumerable<GamePiece> Pieces { get => _board.Values; }
 
         public void TakeTurn(Point placement)
         {
