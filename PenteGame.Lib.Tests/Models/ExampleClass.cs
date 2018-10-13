@@ -14,7 +14,7 @@ namespace PenteGame.Lib.Tests.Models
         //we mark the tests with the test attribute
         [Test]
         public void TheFirstTest()
-        {
+        {/*C:\Users\Micah Ketchum\Documents\QuarterFucking9\Principles of Software Engineering\Pente\PenteGame.Lib.Tests\Models\ExampleClass.cs*/
             //if a statement is true
             Assert.True(true);
             
