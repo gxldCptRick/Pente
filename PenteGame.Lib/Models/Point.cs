@@ -11,6 +11,12 @@ namespace PenteGame.Lib.Models
        public int x;
        public int y;
 
+        public Point(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+
         public override bool Equals(object obj)
         {
             if (obj is null) return false;

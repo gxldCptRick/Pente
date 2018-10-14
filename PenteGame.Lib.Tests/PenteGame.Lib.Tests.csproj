@@ -54,13 +54,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\PenteControllerShould.cs" />
-    <Compile Include="Models\ExampleClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PenteGame.Lib\PenteGame.Lib.csproj">
       <Project>{057BDBCB-1CAA-420C-B8B0-152B3452DAFF}</Project>
