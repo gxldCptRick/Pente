@@ -20,7 +20,6 @@ namespace PenteGame.ViewModels
             set { _numberOfWins = value; PropertyChanging(); }
         }
 
-
         private int _numberOfCaptures;
 
         public int NumberOfCaptures

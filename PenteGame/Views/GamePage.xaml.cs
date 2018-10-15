@@ -44,5 +44,10 @@ namespace PenteGame.Views
         {
             FillGrid();
         }
+
+        private void PlayerControl_Loaded(object sender, RoutedEventArgs e)
+        {
+     
+        }
     }
 }

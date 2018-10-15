@@ -14,7 +14,7 @@ namespace PenteGame
         public MainWindow()
         {
             InitializeComponent();
-            ProccessPageRequest(PageRequest.Main);
+            ProccessPageRequest(PageRequest.GameOver);
         }
 
         private T GeneratePage<T>() where T : Page, IPageChanger, new()
@@ -40,6 +40,9 @@ namespace PenteGame
                     break;
                 case PageRequest.Game:
                     MainFrame.Navigate(GeneratePage<GamePage>());
+                    break;
+                case PageRequest.GameOver:
+                    MainFrame.Navigate(GeneratePage<GameOverPage>());
                     break;
                 default:
                     throw new ArgumentException("You picked an unsuportted PageRequest.", nameof(pageToGoTo));
