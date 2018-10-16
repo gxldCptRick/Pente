@@ -33,8 +33,9 @@ namespace PenteGame.Views
             {
                 var rect = new Rectangle();
                 rect.Stroke = colorBrush;
-                rect.MouseDown += (s, e) => MessageBox.Show($"Bonjour {e.GetPosition(this.GameGrid)}");
-                this.GameGrid.Children.Add(rect);
+				//rect.MouseDown += (s, e) => MessageBox.Show($"Bonjour {e.GetPosition(this.GameGrid)}");
+				rect.MouseDown += (s, e) => AddPiece(s,e);
+				this.GameGrid.Children.Add(rect);
             }
         }
 
@@ -44,5 +45,27 @@ namespace PenteGame.Views
         {
             FillGrid();
         }
-    }
+		bool pTurn = true;
+		private void AddPiece(object sender, MouseButtonEventArgs e)
+		{
+			Uri peice = new Uri("/Resources/PurplePiece.png", UriKind.Relative);
+			if (pTurn)
+			{
+				peice = new Uri("/Resources/GreyPiece.png", UriKind.Relative);
+			}
+			string BodyName = "Piece";
+			Image BodyImage = new Image
+			{
+				Width = 20,
+				Height = 20,
+				Name = BodyName,
+				Source = new BitmapImage(peice)
+			};
+			Console.WriteLine("Add");
+			PieceGrid.Children.Add(BodyImage);
+			Canvas.SetTop(BodyImage, e.GetPosition(this.GameGrid).Y);
+			Canvas.SetLeft(BodyImage, e.GetPosition(this.GameGrid).X);
+			pTurn = !pTurn;
+		}
+	}
 }

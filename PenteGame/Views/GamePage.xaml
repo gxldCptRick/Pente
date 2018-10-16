@@ -14,7 +14,7 @@
             <RowDefinition Height=".8*"/>
             <RowDefinition Height=".15*"/>
         </Grid.RowDefinitions>
-        <Canvas Grid.Row="1" Name="PieceGrid"/>
+        <Canvas Grid.Row="1" Name="PieceGrid" MouseDown="AddPiece"/>
         <UniformGrid Grid.Row="1" Name="GameGrid" Columns="19" Rows="19"/>
     </Grid>
 </Page>
