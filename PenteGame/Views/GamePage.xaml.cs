@@ -32,7 +32,14 @@ namespace PenteGame.Views
             for (int i = 0; i < 19*19; i++)
             {
                 var rect = new Rectangle();
-                rect.Stroke = colorBrush;
+				rect.Fill = new ImageBrush(new BitmapImage(new Uri(@"./Resources/GreyPiece.png", UriKind.Relative)));
+
+				if (i%2==0)
+				{
+				rect.Fill = new ImageBrush(new BitmapImage(new Uri(@"./Resources/PurplePiece.png", UriKind.Relative)));
+
+				}
+				rect.Stroke = colorBrush;
 				//rect.MouseDown += (s, e) => MessageBox.Show($"Bonjour {e.GetPosition(this.GameGrid)}");
 				rect.MouseDown += (s, e) => AddPiece(s,e);
 				this.GameGrid.Children.Add(rect);

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PenteGame"
         mc:Ignorable="d"
-        Title="Pente Beans" Foreground="MediumPurple" Height="450" Width="800">
+        Title="Pente Beans" Foreground="MediumPurple" Height="450" Width="800" MinHeight="450" MinWidth="500">
     <Grid>
         <Frame Name="MainFrame" NavigationUIVisibility="Visible">
         </Frame>
