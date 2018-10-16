@@ -30,6 +30,7 @@ namespace PenteGame.Views
 
         private void ExitButtonClicked(object sender, RoutedEventArgs e)
         {
+
             Application.Current.Shutdown();
         }
 

@@ -29,12 +29,24 @@ namespace PenteGame.Views
         private void FillGrid()
         {
             var colorBrush = new BrushConverter().ConvertFromString("#87A885") as SolidColorBrush;
-            for (int i = 0; i < 19*19; i++)
+			ImageBrush gray = new ImageBrush(new BitmapImage(new Uri(@"./Resources/GreyPiece.png", UriKind.Relative)));
+			ImageBrush purple = new ImageBrush(new BitmapImage(new Uri(@"./Resources/PurplePiece.png", UriKind.Relative)));
+			for (int i = 0; i < 19*19; i++)
             {
-                var rect = new Rectangle();
-                rect.Stroke = colorBrush;
-                rect.MouseDown += (s, e) => MessageBox.Show($"Bonjour {e.GetPosition(this.GameGrid)}");
-                this.GameGrid.Children.Add(rect);
+
+				var rect = new Rectangle
+				{
+					Fill = gray,
+					Stroke = colorBrush
+				};
+				if (i%2==0)
+				{
+					rect.Fill = purple;
+				}
+				//rect.MouseDown += (s, e) => MessageBox.Show($"Bonjour {e.GetPosition(this.GameGrid)}");
+				rect.MouseDown += (s, e) => AddPiece(s,e);
+				Console.WriteLine("Added rect " + rect);
+				this.GameGrid.Children.Add(rect);
             }
         }
 
@@ -44,10 +56,27 @@ namespace PenteGame.Views
         {
             FillGrid();
         }
-
-        private void PlayerControl_Loaded(object sender, RoutedEventArgs e)
-        {
-     
-        }
-    }
+		bool pTurn = true;
+		private void AddPiece(object sender, MouseButtonEventArgs e)
+		{
+			Uri peice = new Uri("/Resources/PurplePiece.png", UriKind.Relative);
+			if (pTurn)
+			{
+				peice = new Uri("/Resources/GreyPiece.png", UriKind.Relative);
+			}
+			string BodyName = "Piece";
+			Image BodyImage = new Image
+			{
+				Width = 20,
+				Height = 20,
+				Name = BodyName,
+				Source = new BitmapImage(peice)
+			};
+			Console.WriteLine("Add");
+			PieceGrid.Children.Add(BodyImage);
+			Canvas.SetTop(BodyImage, e.GetPosition(this.GameGrid).Y);
+			Canvas.SetLeft(BodyImage, e.GetPosition(this.GameGrid).X);
+			pTurn = !pTurn;
+		}
+	}
 }
