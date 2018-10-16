@@ -4,6 +4,7 @@
     {
         Main,
         Help,
-        Game
+        Game,
+        GameOver
     }
 }

@@ -4,17 +4,40 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:PenteGame.Views"
+            xmlns:uc="clr-namespace:PenteGame.Views.UserControls"
+
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Loaded="Page_Loaded"
       Title="GamePage">
     <Grid Background="LightGray">
         <Grid.RowDefinitions>
-            <RowDefinition Height=".2*"/>
+            <RowDefinition Height=".3*"/>
             <RowDefinition Height=".8*"/>
             <RowDefinition Height=".15*"/>
         </Grid.RowDefinitions>
-        <Canvas Grid.Row="1" Name="PieceGrid" MouseDown="AddPiece"/>
+        <Canvas Grid.Row="1" Name="PieceGrid"/>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <uc:PlayerControl/>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" Content="0" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center"></Label>
+                <Label Grid.Row="1" Content="|100 - -0|" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center"></Label>
+                <Label Grid.Row="2" Content="This is another label" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center"></Label>
+            </Grid>
+            <uc:PlayerControl x:Name="Thing" Loaded="PlayerControl_Loaded" Grid.Column="2"/>
+
+        </Grid>
         <UniformGrid Grid.Row="1" Name="GameGrid" Columns="19" Rows="19"/>
+        <Grid></Grid>
     </Grid>
 </Page>
