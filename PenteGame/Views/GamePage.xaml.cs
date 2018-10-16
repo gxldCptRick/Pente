@@ -29,12 +29,23 @@ namespace PenteGame.Views
         private void FillGrid()
         {
             var colorBrush = new BrushConverter().ConvertFromString("#87A885") as SolidColorBrush;
-            for (int i = 0; i < 19*19; i++)
+			ImageBrush gray = new ImageBrush(new BitmapImage(new Uri(@"./Resources/GreyPiece.png", UriKind.Relative)));
+			ImageBrush purple = new ImageBrush(new BitmapImage(new Uri(@"./Resources/PurplePiece.png", UriKind.Relative)));
+			for (int i = 0; i < 19*19; i++)
             {
-                var rect = new Rectangle();
-                rect.Stroke = colorBrush;
+
+				var rect = new Rectangle
+				{
+					Fill = gray,
+					Stroke = colorBrush
+				};
+				if (i%2==0)
+				{
+					rect.Fill = purple;
+				}
 				//rect.MouseDown += (s, e) => MessageBox.Show($"Bonjour {e.GetPosition(this.GameGrid)}");
 				rect.MouseDown += (s, e) => AddPiece(s,e);
+				Console.WriteLine("Added rect " + rect);
 				this.GameGrid.Children.Add(rect);
             }
         }
