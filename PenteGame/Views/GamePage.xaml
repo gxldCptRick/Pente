@@ -12,7 +12,7 @@
       Title="GamePage">
     <Grid Background="LightGray">
         <Grid.RowDefinitions>
-            <RowDefinition Height=".3*"/>
+            <RowDefinition Height=".2*"/>
             <RowDefinition Height=".8*"/>
             <RowDefinition Height=".05*"/>
         </Grid.RowDefinitions>
@@ -47,7 +47,11 @@
             <UniformGrid  Grid.Column="1" Name="GameGrid" Columns="19" Rows="19" Width="{Binding ActualHeight, ElementName=BoardGrid, Mode=OneWay}" Height="{Binding ActualHeight, ElementName=BoardGrid, Mode=OneWay}"/>
 
             <uc:PlayerControl x:Name="Thing1"  Grid.Column="0"/>
-            <uc:PlayerControl x:Name="Thing"  Grid.Column="2"/>
+            <uc:PlayerControl x:Name="Thing"  Grid.Column="2">
+                <uc:PlayerControl.Background>
+                    <ImageBrush/>
+                </uc:PlayerControl.Background>
+            </uc:PlayerControl>
         </Grid>
         <Grid></Grid>
     </Grid>
