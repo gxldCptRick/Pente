@@ -131,6 +131,8 @@ namespace PenteGame.Views
 					rect.Fill = purple;
 				}
 
+
+				
 				PlayerColor = data.Game.CurrentTurn;
 				}
 			}
