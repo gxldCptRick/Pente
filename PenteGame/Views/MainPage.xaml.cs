@@ -36,7 +36,7 @@ namespace PenteGame.Views
 
         private void StartButtonClicked(object sender, RoutedEventArgs e)
         {
-            this.PageChangeRequested?.Invoke(PageRequest.Game);
+            this.PageChangeRequested?.Invoke(PageRequest.Options);
         }
 
         private void HelpButtonClicked(object sender, RoutedEventArgs e)

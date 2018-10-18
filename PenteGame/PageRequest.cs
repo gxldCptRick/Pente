@@ -5,6 +5,7 @@
         Main,
         Help,
         Game,
-        GameOver
+        GameOver,
+		Options
     }
 }

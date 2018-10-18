@@ -10,61 +10,14 @@
     <Grid Background="LightGray">
         <Grid.RowDefinitions>
             <RowDefinition Height=".3*"/>
-            <RowDefinition Height=".3*"/>
-            <RowDefinition Height=".3*"/>
+            <RowDefinition Height=".25*"/>
+            <RowDefinition Height=".2*"/>
+            <RowDefinition Height=".2*"/>
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" FontSize="30" Foreground="MediumPurple" Content="Pente Beans" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Segoe UI Black"/>
-        <!--The Grid Containing both the radio buttons and the text boxes-->
-        <Grid Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <!--this is the grid for the radio buttons-->
-            <Grid Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <RadioButton GroupName="GameMode" Foreground="MediumPurple" FontSize="17" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="True" Content="One Player"/>
-                <RadioButton Grid.Column="1" Foreground="MediumPurple" FontSize="17" VerticalAlignment="Center" HorizontalAlignment="Center" GroupName="GameMode" Content="Two Player"/>
-            </Grid>
-            <!--this is the grid for the textbox label combos-->
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width=".5*"/>
-                    <ColumnDefinition Width=".5*"/>
-                </Grid.ColumnDefinitions>
-                <Grid Grid.Column="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width=".1*"/>
-                        <ColumnDefinition Width=".7*"/>
-                    </Grid.ColumnDefinitions>
-                    <Label Content="P1:" FontSize="16" Foreground="MediumPurple" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                    <TextBox VerticalContentAlignment="Center" FontSize="14" Foreground="MediumPurple" Background="#C4C4BD" BorderBrush="#87A885" BorderThickness="2" Grid.Column="1" Margin="10 16" />
-                </Grid>
-                <Grid Grid.Column="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width=".1*"/>
-                        <ColumnDefinition Width=".7*"/>
-                    </Grid.ColumnDefinitions>
-                    <Label Content="P2:" FontSize="16" Foreground="MediumPurple" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                    <TextBox VerticalContentAlignment="Center" FontSize="14" Foreground="MediumPurple" Background="#C4C4BD" BorderBrush="#87A885" BorderThickness="2" Grid.Column="1" Margin="10 16" />
-                </Grid>
-            </Grid>
-            
-        </Grid>
-        
-        <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" BorderBrush="#87A885" BorderThickness="2.3" Background="#C4C4BD" Margin="25" FontSize="20" Content="Start" Foreground="MediumPurple" Click="StartButtonClicked"/>
-            <Button Grid.Column="3" BorderBrush="#87A885" BorderThickness="1.5" Background="#C4C4BD" Margin="40" FontSize="16" Content="Quit" Foreground="MediumPurple" Click="ExitButtonClicked"/>
-            <Button Grid.Column="0" BorderBrush="#87A885" BorderThickness="1.5" Background="#C4C4BD" Margin="40" FontSize="16" Content="Halp" Foreground="MediumPurple" Click="HelpButtonClicked" />
-        </Grid>
+        <Label Grid.Row="0" FontSize="100" Foreground="MediumPurple" Content="Pente Beans" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Segoe UI Black"/>
+        <Button Grid.Row="1" BorderBrush="#87A885" BorderThickness="2.3" Background="#C4C4BD" Margin="15" FontSize="40" Content="Start" Foreground="MediumPurple" Width="150" Click="StartButtonClicked"/>
+        <Button Grid.Row="2" BorderBrush="#87A885" BorderThickness="1.5" Background="#C4C4BD" Margin="20" FontSize="20" Content="Halp" Foreground="MediumPurple" Width="100" Click="HelpButtonClicked" />
+        <Button Grid.Row="3" BorderBrush="#87A885" BorderThickness="1.5" Background="#C4C4BD" Margin="20" FontSize="20" Content="Quit" Foreground="MediumPurple" Width="100" Click="ExitButtonClicked"/>
     </Grid>
 </Page>
  

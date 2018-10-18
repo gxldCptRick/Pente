@@ -40,10 +40,12 @@ namespace PenteGame.Views
 		private void FillGrid()
         {
             var colorBrush = new BrushConverter().ConvertFromString("#87A885") as SolidColorBrush;
-			//Brush gray = new Brush();
-			for (int i = 0; i < 19; i++)
+			//Brush gray = new Brush
+			int GridSize = OptionsPage.GridSizeNum;
+
+			for (int i = 0; i < GridSize; i++)
 			{
-				for (int j = 0; j < 19; j++)
+				for (int j = 0; j < GridSize; j++)
 				{
 					Rectangle rect = new Rectangle
 					{
@@ -55,7 +57,7 @@ namespace PenteGame.Views
 					{
 						rect.Fill = topSide;
 					}
-					if (i==18)
+					if (i== GridSize-1)
 					{
 						rect.Fill = bottomSide;
 					}
@@ -63,7 +65,7 @@ namespace PenteGame.Views
 					{
 						rect.Fill = leftSide;
 					}
-					if (j == 18)
+					if (j == GridSize-1)
 					{
 						rect.Fill = rightSide;
 					}
@@ -73,15 +75,15 @@ namespace PenteGame.Views
 					{
 						rect.Fill = upperLeft;
 					}
-					if (i == 0 && j == 18)
+					if (i == 0 && j == GridSize-1)
 					{
 						rect.Fill = upperRight;
 					}
-					if (i == 18 && j == 0)
+					if (i == GridSize-1 && j == 0)
 					{
 						rect.Fill = lowerLeft;
 					}
-					if (i == 18 && j == 18)
+					if (i == GridSize-1 && j == GridSize-1)
 					{
 						rect.Fill = lowerRight;
 					}

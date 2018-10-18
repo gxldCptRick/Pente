@@ -44,7 +44,7 @@
 
 
             <Canvas Grid.Column="1" Name="PieceGrid"/>
-            <UniformGrid  Grid.Column="1" Name="GameGrid" Columns="19" Rows="19" Width="{Binding ActualHeight, ElementName=BoardGrid, Mode=OneWay}" Height="{Binding ActualHeight, ElementName=BoardGrid, Mode=OneWay}"/>
+            <UniformGrid  Grid.Column="1" Name="GameGrid" Columns="{Binding ActualHeight, ElementName=OptionsPage.AlsoGridSize, Mode=OneWay}" Rows="{Binding ActualHeight, ElementName=OptionsPage.AlsoGridSize, Mode=OneWay}" Width="{Binding ActualHeight, ElementName=BoardGrid, Mode=OneWay}" Height="{Binding ActualHeight, ElementName=BoardGrid, Mode=OneWay}"/>
 
             <uc:PlayerControl x:Name="Thing1"  Grid.Column="0"/>
             <uc:PlayerControl x:Name="Thing"  Grid.Column="2">

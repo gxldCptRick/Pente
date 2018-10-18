@@ -1,0 +1,68 @@
+﻿<Page x:Class="PenteGame.Views.OptionsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:PenteGame.Views"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="OptionsPage">
+
+    <Grid Background="LightGray">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height=".25*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
+        <Label Grid.Row="0" Content="Options" FontSize="75" HorizontalAlignment="Center" Foreground="MediumPurple"/>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            
+            <RadioButton GroupName="GameMode" Foreground="MediumPurple" FontSize="25" VerticalAlignment="Bottom" HorizontalAlignment="Center" IsChecked="True" Content="One Player" VerticalContentAlignment="Center"/>
+            <RadioButton Grid.Column="1" Foreground="MediumPurple" FontSize="25" VerticalAlignment="Bottom" HorizontalAlignment="Center" GroupName="GameMode" Content="Two Player" VerticalContentAlignment="Center"/>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width=".5*"/>
+                <ColumnDefinition Width=".5*"/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width=".1*"/>
+                    <ColumnDefinition Width=".7*"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="P1:" FontSize="16" Foreground="MediumPurple" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                <TextBox VerticalContentAlignment="Center" FontSize="30" Foreground="MediumPurple" Background="#C4C4BD" BorderBrush="#87A885" BorderThickness="2" Grid.Column="1" Margin="10 40" />
+            </Grid>
+            <Grid Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width=".1*"/>
+                    <ColumnDefinition Width=".7*"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="P2:" FontSize="16" Foreground="MediumPurple" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                <TextBox VerticalContentAlignment="Center" FontSize="30" Foreground="MediumPurple" Background="#C4C4BD" BorderBrush="#87A885" BorderThickness="2" Grid.Column="1" Margin="10 40" />
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <!--<Button Grid.Column="0" BorderBrush="#87A885" BorderThickness="1.5" Background="#C4C4BD" Margin="40" FontSize="16" Content="Halp" Foreground="MediumPurple" Click="HelpButtonClicked" />-->
+            <Label Grid.Column="0" Content="Grid Size: " FontSize="30" Foreground="MediumPurple" VerticalAlignment="Center" HorizontalAlignment="Right" Margin=" 10"></Label>
+            <Slider Name="GridSize" ValueChanged="GridSize_ValueChanged" IsSnapToTickEnabled="True" Grid.Column="1" VerticalAlignment="Center" Background="LightGray"  Foreground="#FF44168F" Maximum="39" Minimum="9" LargeChange="2" TickFrequency="2" Value="19" SmallChange="2"/>
+            <Label Grid.Column="2" BorderThickness="1.5" Content="{Binding Value, ElementName=GridSize}" Foreground="MediumPurple" Background="#C4C4BD" FontSize="30" BorderBrush="#87A885" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10"/>
+            <Button Grid.Column="3" BorderBrush="#87A885" BorderThickness="1.5" Background="#C4C4BD" Margin="40" FontSize="16" Content="Start" Foreground="MediumPurple" Click="StartGame" />
+        </Grid>
+    </Grid>
+</Page>
