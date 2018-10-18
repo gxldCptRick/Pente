@@ -140,7 +140,9 @@ namespace PenteGame.Lib.Controllers
         /// </summary>
         public void SwitchTurn()
         {
+
             CurrentTurn = CurrentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White;
+            
         }
 
         /// <summary>

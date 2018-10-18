@@ -16,6 +16,8 @@
             <Label FontSize="20"  VerticalAlignment="Center" HorizontalAlignment="Center" Content="Caps:" Foreground="MediumPurple"/>
             <Label Foreground="MediumPurple" FontSize="20" Grid.Column="1" Margin="5" Content="{Binding Path=NumberOfCaptures}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
         </StackPanel>
-        <Image Grid.Column="1" Source="{Binding Path=Color, Converter={StaticResource colorToImage}}" Name="otherThing" Margin=" 0 0 0 1"/>
+        <Border HorizontalAlignment="Center" Name="Highlight" >
+            <Image Grid.Column="1" Source="{Binding Path=Color, Converter={StaticResource colorToImage}}" Width="100" Height="100" Name="otherThing" Margin=" 0 0 0 1"/>
+        </Border>
     </StackPanel>
 </UserControl>

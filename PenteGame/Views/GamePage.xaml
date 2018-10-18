@@ -27,11 +27,10 @@
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition/>
-                    <RowDefinition/>
+                    <!--<RowDefinition/>-->
                 </Grid.RowDefinitions>
-                <Label Grid.Row="0" Content="0" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center"></Label>
-                <Label Grid.Row="1" Content="|100 - -0|" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center"></Label>
-                <Label Grid.Row="2" Content="This is another label" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center"></Label>
+                <Label FontSize="25" x:Name="timerLabel" Grid.Row="0" Content="20" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center"></Label>
+                <Label Grid.Row="1" Content="|100 - - 0|" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center"></Label>
             </Grid>
             <Button Click="ResetButton" Content="Reset"/>
         </Grid>
