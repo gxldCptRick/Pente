@@ -54,15 +54,18 @@ namespace PenteGame.Views
         {
             if(this.DataContext is MainPageData data)
             {
+                var fightMEDean = new PieceColorToActualColorConverter();
                 switch (data.Game.CurrentTurn)
                 {
                     case Lib.Enums.PieceColor.Black:
                         this.winnerLabel.Content = $"{data.PlayerOne.Name} Wins!";
-                        this.winnerLabel.Background = new PieceColorToActualColorConverter().Convert(PieceColor.Black,null,null,null) as Brush;
+                        this.winnerLabel.Foreground = fightMEDean.Convert(PieceColor.Black,null,null,null) as Brush;
+                        this.winnerLabel.Background = fightMEDean.Convert(PieceColor.White, null, null, null) as Brush;
                         break;
                     case Lib.Enums.PieceColor.White:
                         this.winnerLabel.Content = $"{data.PlayerTwo.Name} Wins!";
-                        this.winnerLabel.Background = new PieceColorToActualColorConverter().Convert(PieceColor.White, null, null, null) as Brush;
+                        this.winnerLabel.Foreground = fightMEDean.Convert(PieceColor.White, null, null, null) as Brush;
+                        this.winnerLabel.Background = fightMEDean.Convert(PieceColor.Black, null, null, null) as Brush;
                         break;
                     default:
                         break;

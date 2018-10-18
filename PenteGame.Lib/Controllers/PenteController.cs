@@ -133,8 +133,13 @@ namespace PenteGame.Lib.Controllers
         /// <returns></returns>
         private bool CheckIfCenterPoint(Point pointInQuestion)
         {
-            Point center = new Point(Width / 2, Height / 2);
+            Point center = GenerateCenter();
             return center == pointInQuestion;
+        }
+
+        public Point GenerateCenter()
+        {
+            return new Point(Width / 2, Height / 2); 
         }
 
         /// <summary>

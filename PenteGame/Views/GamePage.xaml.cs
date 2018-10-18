@@ -19,6 +19,7 @@ namespace PenteGame.Views
     /// </summary>
     public partial class GamePage : Page, IPageChanger
     {
+        private bool hasBeenSet = false;
         public GamePage()
         {
             InitializeComponent();
@@ -105,15 +106,18 @@ namespace PenteGame.Views
             FillGrid();
             if (this.DataContext is MainPageData data)
             {
-                data.Game.Capture += (color) => 
+                if (!hasBeenSet)
                 {
-                    RemovePieces(data.Game.Pieces, data);
-                    data.Game.Removal.Clear();
-                };
+                    data.Game.Capture += (color) =>
+                    {
+                        RemovePieces(data.Game.Pieces, data);
+                        data.Game.Removal.Clear();
+                    };
 
-                data.Game.Tria += (color) => MessageBox.Show($"{TranslateColor(color)} has formed a tria");
-                data.Game.Tessara += (color) => MessageBox.Show($"{TranslateColor(color)} has formed a tessera");
-                data.Game.Win += (color) => PageChangeRequested?.Invoke(PageRequest.GameOver);
+                    data.Game.Tria += (color) => MessageBox.Show($"{TranslateColor(color)} has formed a tria");
+                    data.Game.Tessara += (color) => MessageBox.Show($"{TranslateColor(color)} has formed a tessera");
+                    data.Game.Win += (color) => PageChangeRequested?.Invoke(PageRequest.GameOver);
+                }
             }
         }
 

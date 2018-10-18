@@ -47,11 +47,7 @@
             <UniformGrid  Grid.Column="1" Name="GameGrid" Columns="{Binding ActualHeight, ElementName=OptionsPage.AlsoGridSize, Mode=OneWay}" Rows="{Binding ActualHeight, ElementName=OptionsPage.AlsoGridSize, Mode=OneWay}" Width="{Binding ActualHeight, ElementName=BoardGrid, Mode=OneWay}" Height="{Binding ActualHeight, ElementName=BoardGrid, Mode=OneWay}"/>
 
             <uc:PlayerControl DataContext="{Binding PlayerOne}" x:Name="PlayerOneDisply"  Grid.Column="0"/>
-            <uc:PlayerControl DataContext="{Binding PlayerTwo}" x:Name="PlayerTwoDisplay"  Grid.Column="2">
-                <uc:PlayerControl.Background>
-                    <ImageBrush/>
-                </uc:PlayerControl.Background>
-            </uc:PlayerControl>
+            <uc:PlayerControl DataContext="{Binding PlayerTwo}" x:Name="PlayerTwoDisplay"  Grid.Column="2"/>
         </Grid>
         <Grid></Grid>
     </Grid>
