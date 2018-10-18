@@ -25,7 +25,7 @@ namespace PenteGame.Views
         {
             InitializeComponent();
         }
-
+			//Loads all the images for the grid
 			ImageBrush gray = new ImageBrush(new BitmapImage(new Uri(@"./Resources/GreyPiece.png", UriKind.Relative)));
 			ImageBrush purple = new ImageBrush(new BitmapImage(new Uri(@"./Resources/PurplePiece.png", UriKind.Relative)));
 			ImageBrush intersection =  new ImageBrush(new BitmapImage(new Uri(@"./Resources/Intersection.png", UriKind.Relative)));
@@ -39,20 +39,21 @@ namespace PenteGame.Views
 			ImageBrush lowerRight = new ImageBrush(new BitmapImage(new Uri(@"./Resources/LowerRight.png", UriKind.Relative)));
 		private void FillGrid()
         {
-            var colorBrush = new BrushConverter().ConvertFromString("#87A885") as SolidColorBrush;
-			//Brush gray = new Brush
+            //var colorBrush = new BrushConverter().ConvertFromString("#87A885") as SolidColorBrush;
+			//Sets the grid size to the seleced options
 			int GridSize = OptionsPage.GridSizeNum;
-
 			for (int i = 0; i < GridSize; i++)
 			{
 				for (int j = 0; j < GridSize; j++)
 				{
+					//Fills every rectangle with the default '+' image
 					Rectangle rect = new Rectangle
 					{
 						Fill = intersection
 					};
 
 					//Replaces fill with side image
+					//if it is the 0 index, or last for the first for loop, or if it is the first/last index for the second for floop, ir replaces the fill with a side image
 					if (i==0)
 					{
 						rect.Fill = topSide;
@@ -71,6 +72,7 @@ namespace PenteGame.Views
 					}
 
 					//replaces corner with corner image
+					//if it is the first or last index for both for loops, it sets the fill as the corner image
 					if (i == 0 && j == 0)
 					{
 						rect.Fill = upperLeft;
@@ -94,23 +96,7 @@ namespace PenteGame.Views
 					this.GameGrid.Children.Add(rect);
 				}
 			}
-			//for (int i = 0; i < 19*19; i++)
-   //         {
 
-			//	var rect = new Rectangle
-			//	{
-			//		Fill = intersection,
-			//		//Stroke = colorBrush
-			//	};
-
-			//	//if (i%2==0)
-			//	//{
-			//	//	rect.Fill = purple;
-			//	//}
-			//	//rect.MouseDown += (s, e) => MessageBox.Show($"Bonjour {e.GetPosition(this.GameGrid)}");
-			//	//rect.MouseDown += (s, e) => AddPiece(s,e);
-			//	//this.GameGrid.Children.Add(rect);
-   //         }
         }
 
         public event Action<PageRequest> PageChangeRequested;
@@ -122,9 +108,13 @@ namespace PenteGame.Views
 		bool pTurn = true;
 		private void AddPiece(object sender, MouseButtonEventArgs e)
 		{
-
+			//On click, replace the fill with the right color 
 			Rectangle rect = (Rectangle)sender;
-			if (!rect.Fill.Equals(gray) || !rect.Fill.Equals(purple))
+			ImageSource graypiece = gray.ImageSource;
+			ImageSource purplepiece = purple.ImageSource;
+			ImageSource tile = ((ImageBrush)rect.Fill).ImageSource;
+			
+			if (!(tile.Equals(graypiece)) || !(tile == (purplepiece)))
 			{
 				if (pTurn)
 				{
@@ -135,8 +125,23 @@ namespace PenteGame.Views
 					rect.Fill = purple;
 				}
 			pTurn = !pTurn;
-
+				GetPosition(rect);
 			}
+
+
+		}
+
+		private int GetPosition(Rectangle rect)
+		{
+			int rows = OptionsPage.GridSizeNum;
+			int columns = OptionsPage.GridSizeNum;
+
+			int index = GameGrid.Children.IndexOf(rect);
+
+			int row = index / columns;  // divide
+			int column = index % columns;  // modulus
+			Console.WriteLine("column " + column + "row " + row);
+			return 0;
 		}
 	}
 }
