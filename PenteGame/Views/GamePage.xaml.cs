@@ -1,8 +1,10 @@
 ﻿using PenteGame.Lib.Enums;
+using PenteGame.Lib.Models;
 using PenteGame.ViewModels;
 using PenteGame.Views.Intefaces;
 using System;
 using System.Timers;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -20,6 +22,7 @@ namespace PenteGame.Views
     {
         private static Timer timer;
 
+        private bool hasBeenSet = false;
         public GamePage()
         {
             InitializeComponent();
@@ -37,6 +40,7 @@ namespace PenteGame.Views
         private static ImageBrush upperRight = new ImageBrush(new BitmapImage(new Uri(@"./Resources/UpperRight.png", UriKind.Relative)));
         private static ImageBrush lowerLeft = new ImageBrush(new BitmapImage(new Uri(@"./Resources/LowerLeft.png", UriKind.Relative)));
         private static ImageBrush lowerRight = new ImageBrush(new BitmapImage(new Uri(@"./Resources/LowerRight.png", UriKind.Relative)));
+
         private void FillGrid()
         {
             //var colorBrush = new BrushConverter().ConvertFromString("#87A885") as SolidColorBrush;
@@ -89,7 +93,7 @@ namespace PenteGame.Views
                     {
                         rect.Fill = lowerRight;
                     }
-
+                    
                     rect.MouseDown += (s, e) => AddPiece(s, e);
                     GameGrid.Children.Add(rect);
                 }
@@ -100,6 +104,33 @@ namespace PenteGame.Views
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            this.GameGrid.Children.Clear();
+            FillGrid();
+            if (this.DataContext is MainPageData data)
+            {
+                if (!hasBeenSet)
+                {
+                    data.Game.Capture += (color) =>
+                    {
+                        RemovePieces(data.Game.Pieces, data);
+                        data.Game.Removal.Clear();
+                    };
+
+                    data.Game.Tria += (color) => MessageBox.Show($"{TranslateColor(color)} has formed a tria");
+                    data.Game.Tessara += (color) => MessageBox.Show($"{TranslateColor(color)} has formed a tessera");
+                    data.Game.Win += (color) => PageChangeRequested?.Invoke(PageRequest.GameOver);
+                }
+            }
+        }
+
+        private string TranslateColor(PieceColor color)
+        {
+            return color == PieceColor.Black ? "gray" : "purple";
+        }
+
+        private void RemovePieces(IEnumerable<GamePiece> pieces, MainPageData data)
+        {
+            this.GameGrid.Children.Clear();
             FillGrid();
             timer = new System.Timers.Timer(1000);
             timer.Elapsed += OnTimedEvent;
@@ -114,6 +145,14 @@ namespace PenteGame.Views
 
             });
             }
+
+            foreach (var piece in pieces)
+            {
+                int index = (piece.Point.y * data.GridSize) + piece.Point.x;
+                Console.WriteLine($"value: {index} ");
+                (this.GameGrid.Children[index] as Rectangle).Fill = piece.Color == PieceColor.Black ? gray : purple;  
+            }
+        }
 
         private PieceColor PlayerColor = PieceColor.Black;
         private void AddPiece(object sender, MouseButtonEventArgs e)
@@ -142,15 +181,19 @@ namespace PenteGame.Views
                     PlayerColor = data.Game.CurrentTurn;
                 }
             }
+                PlayerColor = data.Game.CurrentTurn;
+                RemovePieces(data.Game.Pieces, data);
+            }
+
+
+
         }
 
         private Point GetPosition(Rectangle rect)
         {
             int rows = OptionsPage.GridSizeNum;
             int columns = OptionsPage.GridSizeNum;
-
             int index = GameGrid.Children.IndexOf(rect);
-
             int row = index / columns;  // divide
             int column = index % columns;  // modulus
             Point coord = new Point(column, row);

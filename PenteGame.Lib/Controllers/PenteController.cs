@@ -17,7 +17,7 @@ namespace PenteGame.Lib.Controllers
         private int _height;
         private int _width;
         private bool _firstMoveHasBeenMade;
-
+        private bool gameIsOver;
         public int Width
         {
             get => _width;
@@ -43,7 +43,7 @@ namespace PenteGame.Lib.Controllers
 
         public PieceColor CurrentTurn { get; set; }
         public IEnumerable<GamePiece> Pieces => _board.Values;
-        public List<Point> Removal { get; set; }
+        public List<Point> Removal { get; set; } = new List<Point>();
 
         public event Action<PieceColor> Tessara;
         public event Action<PieceColor> Tria;
@@ -69,6 +69,7 @@ namespace PenteGame.Lib.Controllers
                     _board.Remove(pointToRemove);
                 }
             };
+            Win += (color) => gameIsOver = true;
             ResetGame();
         }
 
@@ -77,6 +78,7 @@ namespace PenteGame.Lib.Controllers
         /// </summary>
         public void ResetGame()
         {
+            gameIsOver = false;
             _firstMoveHasBeenMade = false;
             CurrentTurn = PieceColor.Black;
             _captures[PieceColor.Black] = 0;
@@ -131,8 +133,13 @@ namespace PenteGame.Lib.Controllers
         /// <returns></returns>
         private bool CheckIfCenterPoint(Point pointInQuestion)
         {
-            Point center = new Point(Width / 2, Height / 2);
+            Point center = GenerateCenter();
             return center == pointInQuestion;
+        }
+
+        public Point GenerateCenter()
+        {
+            return new Point(Width / 2, Height / 2); 
         }
 
         /// <summary>
@@ -140,9 +147,8 @@ namespace PenteGame.Lib.Controllers
         /// </summary>
         public void SwitchTurn()
         {
-
-            CurrentTurn = CurrentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White;
-            
+            if(!gameIsOver)
+                CurrentTurn = CurrentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White;
         }
 
         /// <summary>
@@ -279,9 +285,9 @@ namespace PenteGame.Lib.Controllers
             int totalFound = CountHowManyFollowCapturePattern(originPoint, calculateNextPoint);
             if (totalFound == MaxDistanceForCapture)
             {
-                Capture?.Invoke(_board[originPoint].Color);
                 Removal.Add(calculateNextPoint(originPoint, 1));
                 Removal.Add(calculateNextPoint(originPoint, 2));
+                Capture?.Invoke(_board[originPoint].Color);
             }
         }
 

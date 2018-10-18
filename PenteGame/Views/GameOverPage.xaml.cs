@@ -1,4 +1,6 @@
-﻿using PenteGame.ViewModels;
+﻿using PenteGame.Converters;
+using PenteGame.Lib.Enums;
+using PenteGame.ViewModels;
 using PenteGame.Views.Intefaces;
 using System;
 using System.Collections.Generic;
@@ -46,6 +48,29 @@ namespace PenteGame.Views
                 data.Game.ResetGame();
             }
             PageChangeRequested.Invoke(PageRequest.Game);
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            if(this.DataContext is MainPageData data)
+            {
+                var fightMEDean = new PieceColorToActualColorConverter();
+                switch (data.Game.CurrentTurn)
+                {
+                    case Lib.Enums.PieceColor.Black:
+                        this.winnerLabel.Content = $"{data.PlayerOne.Name} Wins!";
+                        this.winnerLabel.Foreground = fightMEDean.Convert(PieceColor.Black,null,null,null) as Brush;
+                        this.winnerLabel.Background = fightMEDean.Convert(PieceColor.White, null, null, null) as Brush;
+                        break;
+                    case Lib.Enums.PieceColor.White:
+                        this.winnerLabel.Content = $"{data.PlayerTwo.Name} Wins!";
+                        this.winnerLabel.Foreground = fightMEDean.Convert(PieceColor.White, null, null, null) as Brush;
+                        this.winnerLabel.Background = fightMEDean.Convert(PieceColor.Black, null, null, null) as Brush;
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
     }
 }
