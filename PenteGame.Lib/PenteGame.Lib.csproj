@@ -45,6 +45,7 @@
     <Compile Include="Models\GamePiece.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Models\Point.cs" />
+    <Compile Include="Models\Extensions\PointExtensions.cs" />
     <Compile Include="PieceColor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

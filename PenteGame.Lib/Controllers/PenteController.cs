@@ -17,7 +17,7 @@ namespace PenteGame.Lib.Controllers
         private readonly IDictionary<PieceColor, int> _captures;
         private int _height;
         private int _width;
-
+        private bool firstMoveMade;
         public int Width
         {
             get => _width;
@@ -46,65 +46,73 @@ namespace PenteGame.Lib.Controllers
 
         public PenteController()
         {
+            this.firstMoveMade = false;
             _board = new Dictionary<Point, GamePiece>();
             _captures = new Dictionary<PieceColor, int>();
-            //subscribe to our own capture event so we can increment our capture count;
+            Width = 19;
+            Height = 19;
+            _captures[PieceColor.Black] = 0;
+            _captures[PieceColor.White] = 0;
+            Capture += (color) => 
+            {
+                _captures[color]++;
+                if (_captures[color] >= 5)
+                {
+                    Win?.Invoke(color);
+                }
+            };
         }
 
         public int GetTotalCaptures(PieceColor color)
         {
-            return _captures[color];
+            int totalCaptures = 0;
+
+            if (_captures.ContainsKey(color))
+            {
+                totalCaptures = _captures[color];
+            }
+
+            return totalCaptures;
         }
 
         public bool TakeTurn(Point placement, PieceColor color) //Returns bool result depending on the validity of the position
         {
             bool isValidMove = false;
-            if (_board.ContainsKey(placement) || color != CurrentTurn || !IsOnBoard(placement))
+            if (!_board.ContainsKey(placement) &&
+                color == CurrentTurn &&
+                IsOnBoard(placement) &&
+                ((!firstMoveMade && CheckIfCenterPoint(placement)) || firstMoveMade))
             {
+                firstMoveMade = true;
                 isValidMove = true;
-                CoordinateMoves(placement, color);
+                _board[placement] = new GamePiece(placement, color);
+                CoordinateMoves(placement);
+                SwitchTurn();
             }
             return isValidMove;
         }
 
-        private void CoordinateMoves(Point placement, PieceColor color)
+        private bool CheckIfCenterPoint(Point placement)
         {
-            // first check if there is a capture
-            // then check if there is a tria
-            //if there is a tria check for tessera
-            //if there is no tessera fire tria event.
-            // if there is a tessera check for win
-            // if there is no win fire the tessera event.
-            //if there is a win fire the win event and hold it.
+            Point center = new Point(Width/2, Height/2);
+            return center == placement;
         }
 
-        private int CaptureMethod(Point basePoint, Func<Point, int, Point> getNextPoint)
+        private void SwitchTurn()
         {
-            int distanceCounter = 0;
-            Point positionDown;
-            do
-            {
-                positionDown = getNextPoint(basePoint, distanceCounter);
-
-            } while (distanceCounter < MaxDistanceForCapture &&
-                    CheckIfPointExists(positionDown) &&
-                    (CheckIfOppositePiece(positionDown, _board[basePoint].Color, distanceCounter) ||
-                    CheckIfJoiningPiece(positionDown, _board[basePoint].Color, distanceCounter)));
-
-            return distanceCounter;
+            CurrentTurn = CurrentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White;
         }
 
-        private bool ProccessCapture(Point ogPiece, Func<Point, int, Point> calculateNextPoint)
+        private void CoordinateMoves(Point placement)
         {
-            bool captureHasHappened = false;
-            int totalFound = CaptureMethod(ogPiece, calculateNextPoint);
-            if (totalFound == MaxDistanceForCapture)
-            {
-                captureHasHappened = true;
-                _board.Remove(calculateNextPoint(ogPiece, 1));
-                _board.Remove(calculateNextPoint(ogPiece, 2));
-            }
-            return captureHasHappened;
+            CheckVerticalCapture(placement);
+            CheckDiagonalRightCapture(placement);
+            CheckDiagonalLeftCapture(placement);
+            CheckHorizontalCapture(placement);
+            CheckHorizontalGroupings(placement);
+            CheckVerticalGroupings(placement);
+            CheckDiagonalUpperRightGroupings(placement);
+            CheckDiagonalUpperLeftGroupings(placement);
         }
 
         private bool CheckVerticalCapture(Point placement) //Check if a piece could be captured vertically and captures if true
@@ -121,63 +129,106 @@ namespace PenteGame.Lib.Controllers
             return horizontalCaptureHasBeenFound;
         }
 
-        //some method to check recursively???
-        //how would that work??
-        //when do we break??
-        //if break in pattern???
-        // what would be the pattern???
-        // we could for the tessera, tria, and win
-        // we need to account for when a center piece is placed for the win
-        // connect four logic
-        // if non-existent || color != ours break out of recursion maybe??
-        // non-existent meaning either a null object at point or point not even on board.
-        // then check in the opposite but same direction??
-        // so in a sense we check down then go up
-        // if we checked left then go right
-        // if we checked diagonally upper left check downward right
-        // if we checked diagonally upper right check downward left
 
-        private bool CheckVerticalTessara()
+        private bool CheckDiagonalRightCapture(Point newestPiece)
         {
-            bool verticalTesseraIsFound = false;
-            //check if there is a tessera down
-            //check if there is a tessera up
-            return verticalTesseraIsFound;
+            bool horizontalCaptureHasBeenFound = ProccessCapture(newestPiece, (point, mod) => point.AddToX(mod).AddToY(mod));
+            horizontalCaptureHasBeenFound = ProccessCapture(newestPiece, (point, mod) => point.AddToX(-mod).AddToY(-mod)) || horizontalCaptureHasBeenFound;
+            return horizontalCaptureHasBeenFound;
         }
 
-        private bool CheckHorizontalTessara()
+        private bool CheckDiagonalLeftCapture(Point newestPiece)
         {
-            bool horizontalTesseraIsFound = false;
-            //check if there is a tessera left 
-            //check if there is a tessera right.
-            return horizontalTesseraIsFound;
+            bool horizontalCaptureHasBeenFound = ProccessCapture(newestPiece, (point, mod) => point.AddToX(-mod).AddToY(mod));
+            horizontalCaptureHasBeenFound = ProccessCapture(newestPiece, (point, mod) => point.AddToX(-mod).AddToY(mod)) || horizontalCaptureHasBeenFound;
+            return horizontalCaptureHasBeenFound;
         }
 
-        private bool CheckVerticalTria()
+        private int CaptureMethod(Point basePoint, Func<Point, int, Point> getNextPoint)
         {
-            bool verticalTriaHasBeenFound = false;
-            //check for tria and yeah
-            return verticalTriaHasBeenFound;
+            int distanceCounter = 0;
+            Point positionDown;
+            do
+            {
+                positionDown = getNextPoint(basePoint, ++distanceCounter);
+
+            } while (distanceCounter < MaxDistanceForCapture &&
+                    CheckIfPointExists(positionDown) &&
+                    (CheckIfOppositePiece(positionDown, _board[basePoint].Color, distanceCounter) ||
+                    CheckIfJoiningPiece(positionDown, _board[basePoint].Color, distanceCounter)));
+
+            return distanceCounter;
         }
 
-        private bool CheckHorizontalTria()
+        private bool ProccessCapture(Point ogPiece, Func<Point, int, Point> calculateNextPoint)
         {
-            bool horizontalTriaHasBeenFound = false;
-            return horizontalTriaHasBeenFound;
-        }
-        private bool CheckVerticalWin()
-        {
-            bool verticalWinHasHappened = false;
-            return verticalWinHasHappened;
+            bool captureHasHappened = false;
+            int totalFound = CaptureMethod(ogPiece, calculateNextPoint);
+            if (totalFound == MaxDistanceForCapture)
+            {
+                Capture?.Invoke(_board[ogPiece].Color);
+                captureHasHappened = true;
+                _board.Remove(calculateNextPoint(ogPiece, 1));
+                _board.Remove(calculateNextPoint(ogPiece, 2));
+            }
+            return captureHasHappened;
         }
 
-        //maybe we don't need to 
-        //check one of the wins after first true?
-
-        private bool CheckHorizontalWin()
+        private void ProccessGroupings(Func<Point, Point> firstPiece, Func<Point, Point> secondPiece, Point newestPiece)
         {
-            bool horizontalWinHasHappened = false;
-            return horizontalWinHasHappened;
+            int amountFound = CountAllThePiecesInAGivenRowFollowingAPattern(firstPiece, newestPiece, 1);
+            amountFound = CountAllThePiecesInAGivenRowFollowingAPattern(secondPiece, newestPiece, amountFound);
+            if (amountFound > 4)
+            {
+                Win?.Invoke(_board[newestPiece].Color);
+            }
+            else if (amountFound > 3)
+            {
+                Tessara?.Invoke(_board[newestPiece].Color);
+            }
+            else if (amountFound > 2)
+            {
+                Tria?.Invoke(_board[newestPiece].Color);
+            }
+        }
+
+        private void CheckVerticalGroupings(Point newestPiece)
+        {
+            ProccessGroupings((point) => point.AddToY(1), (point) => point.AddToY(-1), newestPiece);
+        }
+
+        private void CheckHorizontalGroupings(Point newestPiece)
+        {
+            ProccessGroupings((point) => point.AddToX(1), (point) => point.AddToX(-1), newestPiece);
+        }
+
+        private void CheckDiagonalUpperRightGroupings(Point newestPiece)
+        {
+            ProccessGroupings((point) => point.AddToX(1).AddToY(1), (point) => point.AddToX(-1).AddToY(-1), newestPiece);
+        }
+
+        private void CheckDiagonalUpperLeftGroupings(Point newestPiece)
+        {
+            ProccessGroupings((point) => point.AddToX(1).AddToY(-1), (point) => point.AddToX(-1).AddToY(1), newestPiece);
+        }
+
+        private int CountAllThePiecesInAGivenRowFollowingAPattern(Func<Point, Point> calculateNextPoint, Point initialPoint, int InitialAmount)
+        {
+            // Generate a recursive function with the following delegate in order to dynamically create the next point. 
+            int Recursion(Point previousPoint, Point nextPoint, int lastTotalCount)
+            {
+                int currentlyRunningTotal = lastTotalCount;
+                if (CheckIfPointExists(nextPoint) &&
+                   _board[nextPoint].Color == _board[previousPoint].Color)
+                {
+                    currentlyRunningTotal = Recursion(nextPoint,
+                                                      calculateNextPoint(nextPoint),
+                                                      lastTotalCount + 1);
+                }
+                return currentlyRunningTotal;
+            }
+
+            return Recursion(initialPoint, calculateNextPoint(initialPoint), InitialAmount);
         }
 
         private bool IsOnBoard(Point placement)
