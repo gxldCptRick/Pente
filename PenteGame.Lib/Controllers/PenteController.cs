@@ -176,8 +176,8 @@ namespace PenteGame.Lib.Controllers
 
         private void ProccessGroupings(Func<Point, Point> firstPiece, Func<Point, Point> secondPiece, Point newestPiece)
         {
-            int amountFound = CountAllThePiecesInAGivenRowFollowingAPattern(firstPiece, newestPiece, 1);
-            amountFound = CountAllThePiecesInAGivenRowFollowingAPattern(secondPiece, newestPiece, amountFound);
+            int amountFound = CountAllNeighborsFollowingAGivenSequence(firstPiece, newestPiece, 1);
+            amountFound = CountAllNeighborsFollowingAGivenSequence(secondPiece, newestPiece, amountFound);
             if (amountFound > 4)
             {
                 Win?.Invoke(_board[newestPiece].Color);
@@ -212,23 +212,23 @@ namespace PenteGame.Lib.Controllers
             ProccessGroupings((point) => point.AddToX(1).AddToY(-1), (point) => point.AddToX(-1).AddToY(1), newestPiece);
         }
 
-        private int CountAllThePiecesInAGivenRowFollowingAPattern(Func<Point, Point> calculateNextPoint, Point initialPoint, int InitialAmount)
+        private int CountAllNeighborsFollowingAGivenSequence(Func<Point, Point> calculateNextPoint, Point initialPoint, int InitialAmount)
         {
             // Generate a recursive function with the following delegate in order to dynamically create the next point. 
-            int Recursion(Point previousPoint, Point nextPoint, int lastTotalCount)
+            int RecursivelyCountNeighbors(Point previousPoint, Point nextPoint, int lastTotalCount)
             {
                 int currentlyRunningTotal = lastTotalCount;
                 if (CheckIfPointExists(nextPoint) &&
                    _board[nextPoint].Color == _board[previousPoint].Color)
                 {
-                    currentlyRunningTotal = Recursion(nextPoint,
+                    currentlyRunningTotal = RecursivelyCountNeighbors(nextPoint,
                                                       calculateNextPoint(nextPoint),
                                                       lastTotalCount + 1);
                 }
                 return currentlyRunningTotal;
             }
 
-            return Recursion(initialPoint, calculateNextPoint(initialPoint), InitialAmount);
+            return RecursivelyCountNeighbors(initialPoint, calculateNextPoint(initialPoint), InitialAmount);
         }
 
         private bool IsOnBoard(Point placement)
