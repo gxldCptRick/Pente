@@ -13,6 +13,11 @@ namespace PenteGame.Lib.Models
             this.y = y;
         }
 
+        public override string ToString()
+        {
+            return $"({x},{y})";
+        }
+
         public override bool Equals(object obj)
         {
             if (obj is null)
