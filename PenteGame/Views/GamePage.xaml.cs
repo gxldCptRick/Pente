@@ -110,7 +110,16 @@ namespace PenteGame.Views
                     RemovePieces(data.Game.Pieces, data);
                     data.Game.Removal.Clear();
                 };
+
+                data.Game.Tria += (color) => MessageBox.Show($"{TranslateColor(color)} has formed a tria");
+                data.Game.Tessara += (color) => MessageBox.Show($"{TranslateColor(color)} has formed a tessera");
+                data.Game.Win += (color) => PageChangeRequested?.Invoke(PageRequest.GameOver);
             }
+        }
+
+        private string TranslateColor(PieceColor color)
+        {
+            return color == PieceColor.Black ? "gray" : "purple";
         }
 
         private void RemovePieces(IEnumerable<GamePiece> pieces, MainPageData data)
