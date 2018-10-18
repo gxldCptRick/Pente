@@ -17,7 +17,7 @@ namespace PenteGame.Lib.Controllers
         private int _height;
         private int _width;
         private bool _firstMoveHasBeenMade;
-
+        private bool gameIsOver;
         public int Width
         {
             get => _width;
@@ -69,6 +69,7 @@ namespace PenteGame.Lib.Controllers
                     _board.Remove(pointToRemove);
                 }
             };
+            Win += (color) => gameIsOver = true;
             ResetGame();
         }
 
@@ -77,6 +78,7 @@ namespace PenteGame.Lib.Controllers
         /// </summary>
         public void ResetGame()
         {
+            gameIsOver = false;
             _firstMoveHasBeenMade = false;
             CurrentTurn = PieceColor.Black;
             _captures[PieceColor.Black] = 0;
@@ -140,7 +142,8 @@ namespace PenteGame.Lib.Controllers
         /// </summary>
         public void SwitchTurn()
         {
-            CurrentTurn = CurrentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White;
+            if(!gameIsOver)
+                CurrentTurn = CurrentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White;
         }
 
         /// <summary>
