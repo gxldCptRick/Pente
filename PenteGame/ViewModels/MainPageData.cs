@@ -42,7 +42,9 @@ namespace PenteGame.ViewModels
         {
             _gridSize = 19;
             PlayerOne = new PlayerData(PieceColor.Black);
+            PlayerOne.Name = "Player One";
             PlayerTwo = new PlayerData(PieceColor.White);
+            PlayerTwo.Name = "Player Two";
             _mainGameController = new PenteController();
         }
 
