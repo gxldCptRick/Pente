@@ -7,17 +7,17 @@ namespace PenteGame.Lib.Controllers
 {
     public class PenteController
     {
+        //game constants
         private const int MaxDistanceForCapture = 4;
         private const int ClosingBracketDistance = 3;
-        public event Action<PieceColor> Tessara;
-        public event Action<PieceColor> Tria;
-        public event Action<PieceColor> Win;
-        public event Action<PieceColor> Capture;
+
+        //private fields for the actual game
         private readonly IDictionary<Point, GamePiece> _board;
         private readonly IDictionary<PieceColor, int> _captures;
         private int _height;
         private int _width;
-        private bool firstMoveMade;
+        private bool _firstMoveHasBeenMade;
+
         public int Width
         {
             get => _width;
@@ -29,6 +29,7 @@ namespace PenteGame.Lib.Controllers
                 }
             }
         }
+
         public int Height
         {
             get => _height;
@@ -44,16 +45,18 @@ namespace PenteGame.Lib.Controllers
         public PieceColor CurrentTurn { get; set; }
         public IEnumerable<GamePiece> Pieces => _board.Values;
 
+        public event Action<PieceColor> Tessara;
+        public event Action<PieceColor> Tria;
+        public event Action<PieceColor> Win;
+        public event Action<PieceColor> Capture;
+
         public PenteController()
         {
-            this.firstMoveMade = false;
             _board = new Dictionary<Point, GamePiece>();
             _captures = new Dictionary<PieceColor, int>();
             Width = 19;
             Height = 19;
-            _captures[PieceColor.Black] = 0;
-            _captures[PieceColor.White] = 0;
-            Capture += (color) => 
+            Capture += (color) =>
             {
                 _captures[color]++;
                 if (_captures[color] >= 5)
@@ -61,8 +64,26 @@ namespace PenteGame.Lib.Controllers
                     Win?.Invoke(color);
                 }
             };
+            ResetGame();
         }
 
+        /// <summary>
+        /// resets the current game state to the default
+        /// </summary>
+        public void ResetGame()
+        {
+            _firstMoveHasBeenMade = false;
+            CurrentTurn = PieceColor.Black;
+            _captures[PieceColor.Black] = 0;
+            _captures[PieceColor.White] = 0;
+            _board.Clear();
+        }
+
+        /// <summary>
+        /// gets the total amount of captures for a given color.
+        /// </summary>
+        /// <param name="color">the color you want to get the captures for</param>
+        /// <returns>the amount of captures for the color</returns>
         public int GetTotalCaptures(PieceColor color)
         {
             int totalCaptures = 0;
@@ -75,15 +96,22 @@ namespace PenteGame.Lib.Controllers
             return totalCaptures;
         }
 
+        /// <summary>
+        /// this method proccess the placement of a piece and color in order to determine if a valid move is made.
+        /// if a valid move was made it then proccess the turn. it returns whether or not a valid move was made.
+        /// </summary>
+        /// <param name="placement">the newest move</param>
+        /// <param name="color">color of the piece being placed</param>
+        /// <returns>whether or not the turn was valid.</returns>
         public bool TakeTurn(Point placement, PieceColor color) //Returns bool result depending on the validity of the position
         {
             bool isValidMove = false;
             if (!_board.ContainsKey(placement) &&
                 color == CurrentTurn &&
-                IsOnBoard(placement) &&
-                ((!firstMoveMade && CheckIfCenterPoint(placement)) || firstMoveMade))
+                IsPointOnBoard(placement) &&
+                ((!_firstMoveHasBeenMade && CheckIfCenterPoint(placement)) || _firstMoveHasBeenMade))
             {
-                firstMoveMade = true;
+                _firstMoveHasBeenMade = true;
                 isValidMove = true;
                 _board[placement] = new GamePiece(placement, color);
                 CoordinateMoves(placement);
@@ -92,164 +120,258 @@ namespace PenteGame.Lib.Controllers
             return isValidMove;
         }
 
-        private bool CheckIfCenterPoint(Point placement)
+        /// <summary>
+        /// Checks if a given point is in the center of the board.
+        /// </summary>
+        /// <param name="pointInQuestion">the point in question</param>
+        /// <returns></returns>
+        private bool CheckIfCenterPoint(Point pointInQuestion)
         {
-            Point center = new Point(Width/2, Height/2);
-            return center == placement;
+            Point center = new Point(Width / 2, Height / 2);
+            return center == pointInQuestion;
         }
 
-        private void SwitchTurn()
+        /// <summary>
+        /// Switches the turn.
+        /// </summary>
+        public void SwitchTurn()
         {
             CurrentTurn = CurrentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White;
         }
 
-        private void CoordinateMoves(Point placement)
+        /// <summary>
+        /// coordinates the moves for the newest piece added.
+        /// meaning it goes through the long proccess of calling all the captures and also all the checking for each groupings.
+        /// </summary>
+        /// <param name="newestPiece">the newest piece added to the collection</param>
+        private void CoordinateMoves(Point newestPiece)
         {
-            CheckVerticalCapture(placement);
-            CheckDiagonalRightCapture(placement);
-            CheckDiagonalLeftCapture(placement);
-            CheckHorizontalCapture(placement);
-            CheckHorizontalGroupings(placement);
-            CheckVerticalGroupings(placement);
-            CheckDiagonalUpperRightGroupings(placement);
-            CheckDiagonalUpperLeftGroupings(placement);
+            ///check for captures first
+            CheckVerticalCapture(newestPiece);
+            CheckDiagonalRightCapture(newestPiece);
+            CheckDiagonalLeftCapture(newestPiece);
+            CheckHorizontalCapture(newestPiece);
+
+            //check for any formations of trias, tesseras or wins.
+            CheckHorizontalGroupings(newestPiece);
+            CheckVerticalGroupings(newestPiece);
+            CheckDiagonalUpperRightGroupings(newestPiece);
+            CheckDiagonalUpperLeftGroupings(newestPiece);
         }
 
-        private bool CheckVerticalCapture(Point placement) //Check if a piece could be captured vertically and captures if true
+        /// <summary>
+        /// checks for vertical captures
+        /// </summary>
+        /// <param name="newestPiece">the newest piece added to the collection</param>
+        private void CheckVerticalCapture(Point newestPiece) //Check if a piece could be captured vertically and captures if true
         {
-            bool hasBeenAVerticalCapture = ProccessCapture(placement, (point, mod) => point.AddToY(mod));
-            hasBeenAVerticalCapture = ProccessCapture(placement, (point, mod) => point.AddToY(-mod)) || hasBeenAVerticalCapture;
-            return hasBeenAVerticalCapture;
+            ProccessCapture(newestPiece, (point, mod) => point.AddToY(mod));
+            ProccessCapture(newestPiece, (point, mod) => point.AddToY(-mod));
         }
 
-        private bool CheckHorizontalCapture(Point newestPiece)
+        /// <summary>
+        /// checks for the horizontal captures
+        /// </summary>
+        /// <param name="newestPiece">the newest piece added to the collection</param>
+        private void CheckHorizontalCapture(Point newestPiece)
         {
-            bool horizontalCaptureHasBeenFound = ProccessCapture(newestPiece, (point, mod) => point.AddToX(mod));
-            horizontalCaptureHasBeenFound = ProccessCapture(newestPiece, (point, mod) => point.AddToX(-mod)) || horizontalCaptureHasBeenFound;
-            return horizontalCaptureHasBeenFound;
+            ProccessCapture(newestPiece, (point, mod) => point.AddToX(mod));
+            ProccessCapture(newestPiece, (point, mod) => point.AddToX(-mod));
         }
 
-
-        private bool CheckDiagonalRightCapture(Point newestPiece)
+        /// <summary>
+        /// checks for the diagonal right captures
+        /// </summary>
+        /// <param name="newestPiece">the newest piece added to the collection</param>
+        private void CheckDiagonalRightCapture(Point newestPiece)
         {
-            bool horizontalCaptureHasBeenFound = ProccessCapture(newestPiece, (point, mod) => point.AddToX(mod).AddToY(mod));
-            horizontalCaptureHasBeenFound = ProccessCapture(newestPiece, (point, mod) => point.AddToX(-mod).AddToY(-mod)) || horizontalCaptureHasBeenFound;
-            return horizontalCaptureHasBeenFound;
+            ProccessCapture(newestPiece, (point, mod) => point.AddToX(mod).AddToY(mod));
+            ProccessCapture(newestPiece, (point, mod) => point.AddToX(-mod).AddToY(-mod));
         }
 
-        private bool CheckDiagonalLeftCapture(Point newestPiece)
+        /// <summary>
+        /// Checks for the DiagonalLeft captures
+        /// </summary>
+        /// <param name="newestPiece">the newest piece added to the collection</param>
+        private void CheckDiagonalLeftCapture(Point newestPiece)
         {
-            bool horizontalCaptureHasBeenFound = ProccessCapture(newestPiece, (point, mod) => point.AddToX(-mod).AddToY(mod));
-            horizontalCaptureHasBeenFound = ProccessCapture(newestPiece, (point, mod) => point.AddToX(-mod).AddToY(mod)) || horizontalCaptureHasBeenFound;
-            return horizontalCaptureHasBeenFound;
+            ProccessCapture(newestPiece, (point, mod) => point.AddToX(-mod).AddToY(mod));
+            ProccessCapture(newestPiece, (point, mod) => point.AddToX(-mod).AddToY(mod));
         }
 
-        private int CaptureMethod(Point basePoint, Func<Point, int, Point> getNextPoint)
+        /// <summary>
+        /// checks for a vertical form of either a tria or tessera or win condition.
+        /// it then fires the corresponding event.
+        /// </summary>
+        /// <param name="newestPiece">the newest addition to the collection.</param>
+        private void CheckVerticalGroupings(Point newestPiece)
+        {
+            ProccessThePatterns((point) => point.AddToY(1), (point) => point.AddToY(-1), newestPiece);
+        }
+
+        /// <summary>
+        /// checks for a horizontal form of either a tria or tessera or win condition.
+        /// it then fires the corresponding event.
+        /// </summary>
+        /// <param name="newestPiece">the newest addition to the collection.</param>
+        private void CheckHorizontalGroupings(Point newestPiece)
+        {
+            ProccessThePatterns((point) => point.AddToX(1), (point) => point.AddToX(-1), newestPiece);
+        }
+
+        /// <summary>
+        /// checks for a diagonal upper right form of either a tria or tessera or win condition.
+        /// it then fires the corresponding event.
+        /// </summary>
+        /// <param name="newestPiece">the newest addition to the collection.</param>
+        private void CheckDiagonalUpperRightGroupings(Point newestPiece)
+        {
+            ProccessThePatterns((point) => point.AddToX(1).AddToY(1), (point) => point.AddToX(-1).AddToY(-1), newestPiece);
+        }
+
+        /// <summary>
+        /// checks for a diagonal upper left form of either a tria or tessera or win condition.
+        /// it then fires the respective event for each.
+        /// </summary>
+        /// <param name="newestPiece">the newest point added to the collection</param>
+        private void CheckDiagonalUpperLeftGroupings(Point newestPiece)
+        {
+            ProccessThePatterns((point) => point.AddToX(1).AddToY(-1), (point) => point.AddToX(-1).AddToY(1), newestPiece);
+        }
+
+        /// <summary>
+        /// Counts how many points follow the pattern that for the given originPoint
+        /// and returns the running total.
+        /// </summary>
+        /// <param name="originPoint">the origin point to start from</param>
+        /// <param name="calculateNextPoint">the method to generate the next point</param>
+        /// <returns>the count of pieces that follow the given pattern.</returns>
+        private int CountHowManyFollowCapturePattern(Point originPoint, Func<Point, int, Point> calculateNextPoint)
         {
             int distanceCounter = 0;
             Point positionDown;
             do
             {
-                positionDown = getNextPoint(basePoint, ++distanceCounter);
+                positionDown = calculateNextPoint(originPoint, ++distanceCounter);
 
             } while (distanceCounter < MaxDistanceForCapture &&
-                    CheckIfPointExists(positionDown) &&
-                    (CheckIfOppositePiece(positionDown, _board[basePoint].Color, distanceCounter) ||
-                    CheckIfJoiningPiece(positionDown, _board[basePoint].Color, distanceCounter)));
+                    IsPieceAtPoint(positionDown) &&
+                    (CheckIfOppositePiece(positionDown, _board[originPoint].Color, distanceCounter) ||
+                    CheckIfJoiningPiece(positionDown, _board[originPoint].Color, distanceCounter)));
 
             return distanceCounter;
         }
 
-        private bool ProccessCapture(Point ogPiece, Func<Point, int, Point> calculateNextPoint)
+        /// <summary>
+        /// Proccess a capture request based on the pattern passed in.
+        /// if a capture is found it then fires the capture event.
+        /// </summary>
+        /// <param name="originPoint">the origin point</param>
+        /// <param name="calculateNextPoint">the pattern to generate the next point.</param>
+        private void ProccessCapture(Point originPoint, Func<Point, int, Point> calculateNextPoint)
         {
-            bool captureHasHappened = false;
-            int totalFound = CaptureMethod(ogPiece, calculateNextPoint);
+            int totalFound = CountHowManyFollowCapturePattern(originPoint, calculateNextPoint);
             if (totalFound == MaxDistanceForCapture)
             {
-                Capture?.Invoke(_board[ogPiece].Color);
-                captureHasHappened = true;
-                _board.Remove(calculateNextPoint(ogPiece, 1));
-                _board.Remove(calculateNextPoint(ogPiece, 2));
+                Capture?.Invoke(_board[originPoint].Color);
+                _board.Remove(calculateNextPoint(originPoint, 1));
+                _board.Remove(calculateNextPoint(originPoint, 2));
             }
-            return captureHasHappened;
         }
 
-        private void ProccessGroupings(Func<Point, Point> firstPiece, Func<Point, Point> secondPiece, Point newestPiece)
+        /// <summary>
+        /// you call this method with two patterns that make up the full piece of 
+        /// what you are proccessing. you then give it the point you want them to use as the point of reference.
+        /// it will count the amount of matching pieces and then alert the proper event: tria, tessera, or win.
+        /// </summary>
+        /// <param name="firstPattern">the first pattern to match.</param>
+        /// <param name="secondPattern">the second pattern to match.</param>
+        /// <param name="originPoint">the point of reference to work with.</param>
+        private void ProccessThePatterns(Func<Point, Point> firstPattern, Func<Point, Point> secondPattern, Point originPoint)
         {
-            int amountFound = CountAllNeighborsFollowingAGivenSequence(firstPiece, newestPiece, 1);
-            amountFound = CountAllNeighborsFollowingAGivenSequence(secondPiece, newestPiece, amountFound);
+            int amountFound = CountAllNeighborsFollowingAGivenSequence(firstPattern, originPoint, 1);
+            amountFound = CountAllNeighborsFollowingAGivenSequence(secondPattern, originPoint, amountFound);
             if (amountFound > 4)
             {
-                Win?.Invoke(_board[newestPiece].Color);
+                Win?.Invoke(_board[originPoint].Color);
             }
             else if (amountFound > 3)
             {
-                Tessara?.Invoke(_board[newestPiece].Color);
+                Tessara?.Invoke(_board[originPoint].Color);
             }
             else if (amountFound > 2)
             {
-                Tria?.Invoke(_board[newestPiece].Color);
+                Tria?.Invoke(_board[originPoint].Color);
             }
         }
 
-        private void CheckVerticalGroupings(Point newestPiece)
+        /// <summary>
+        /// counts all the neighbors of a point with a given pattern.
+        /// you also must set an intial count for how many you wanted.
+        /// </summary>
+        /// <param name="calculateNextPoint">the pattern that you want the counting to follow</param>
+        /// <param name="initialPoint">the starting point</param>
+        /// <param name="initialAmount">the inital amount to work with</param>
+        /// <returns></returns>
+        private int CountAllNeighborsFollowingAGivenSequence(Func<Point, Point> calculateNextPoint, Point initialPoint, int initialAmount)
         {
-            ProccessGroupings((point) => point.AddToY(1), (point) => point.AddToY(-1), newestPiece);
-        }
-
-        private void CheckHorizontalGroupings(Point newestPiece)
-        {
-            ProccessGroupings((point) => point.AddToX(1), (point) => point.AddToX(-1), newestPiece);
-        }
-
-        private void CheckDiagonalUpperRightGroupings(Point newestPiece)
-        {
-            ProccessGroupings((point) => point.AddToX(1).AddToY(1), (point) => point.AddToX(-1).AddToY(-1), newestPiece);
-        }
-
-        private void CheckDiagonalUpperLeftGroupings(Point newestPiece)
-        {
-            ProccessGroupings((point) => point.AddToX(1).AddToY(-1), (point) => point.AddToX(-1).AddToY(1), newestPiece);
-        }
-
-        private int CountAllNeighborsFollowingAGivenSequence(Func<Point, Point> calculateNextPoint, Point initialPoint, int InitialAmount)
-        {
-            // Generate a recursive function with the following delegate in order to dynamically create the next point. 
-            int RecursivelyCountNeighbors(Point previousPoint, Point nextPoint, int lastTotalCount)
+            int runningTotal = initialAmount;
+            Point nextPoint = calculateNextPoint(initialPoint);
+            while (IsPieceAtPoint(nextPoint) && _board[nextPoint].Color == _board[initialPoint].Color)
             {
-                int currentlyRunningTotal = lastTotalCount;
-                if (CheckIfPointExists(nextPoint) &&
-                   _board[nextPoint].Color == _board[previousPoint].Color)
-                {
-                    currentlyRunningTotal = RecursivelyCountNeighbors(nextPoint,
-                                                      calculateNextPoint(nextPoint),
-                                                      lastTotalCount + 1);
-                }
-                return currentlyRunningTotal;
+                runningTotal++;
+                nextPoint = calculateNextPoint(nextPoint);
             }
 
-            return RecursivelyCountNeighbors(initialPoint, calculateNextPoint(initialPoint), InitialAmount);
+            return runningTotal;
         }
 
-        private bool IsOnBoard(Point placement)
+        /// <summary>
+        /// Checks to see if the given point is even a valid point on our board.
+        /// </summary>
+        /// <param name="pointInQuestion">point in question.</param>
+        /// <returns>returns if the point in question is located within the bounds of the board.</returns>
+        private bool IsPointOnBoard(Point pointInQuestion)
         {
-            return ((placement.x >= 0 && placement.x <= Width) && (placement.y >= 0 && placement.y <= Height));
+            return ((pointInQuestion.x >= 0 && pointInQuestion.x <= Width) && (pointInQuestion.y >= 0 && pointInQuestion.y <= Height));
         }
 
-        private bool CheckIfPointExists(Point placement)
+        /// <summary>
+        /// Checks if the point even exists. 
+        /// exists is defined as is on the board and there is a piece on that spot.
+        /// </summary>
+        /// <param name="pointInQuestion">point in question</param>
+        /// <returns>whether a piece is actually assigned to the point.</returns>
+        private bool IsPieceAtPoint(Point pointInQuestion)
         {
-            return IsOnBoard(placement) && _board.ContainsKey(placement);
+            return IsPointOnBoard(pointInQuestion) && _board.ContainsKey(pointInQuestion);
         }
 
-        private bool CheckIfOppositePiece(Point positionDown, PieceColor color, int distanceCounter)
+        /// <summary>
+        /// checks if the point in question is a valid canidate basded on position and that 
+        /// it is a different color than the target color.
+        /// </summary>
+        /// <param name="pointInQuestion">the point that in question</param>
+        /// <param name="targetColor">the color we don't want it to be</param>
+        /// <param name="position">the position of the point</param>
+        /// <returns>if the piece is not the target color and is in the correct position.</returns>
+        private bool CheckIfOppositePiece(Point pointInQuestion, PieceColor targetColor, int position)
         {
-            //checks if the distance is less than the edge of the bracket and makes sure that its color is not the same.
-            return (distanceCounter < ClosingBracketDistance && _board[positionDown].Color != color);
+            return (position < ClosingBracketDistance && _board[pointInQuestion].Color != targetColor);
         }
-        private bool CheckIfJoiningPiece(Point positionDown, PieceColor color, int distanceCounter)
+
+        /// <summary>
+        /// This Method Checks if the given Position is an joining piece for a and if the position 
+        /// is a valid candidate based on the given position. it also uses the color to see if the position 
+        /// shares the same color.
+        /// </summary>
+        /// <param name="pointInQuestion">piece to check</param>
+        /// <param name="targetColor">the color that you would like it to be</param>
+        /// <param name="position">the position for the point</param>
+        /// <returns>true if the point at the given position is the same as the target color</returns>
+        private bool CheckIfJoiningPiece(Point pointInQuestion, PieceColor targetColor, int position)
         {
-            // checks if it is the end point for a bracket and then if that point has the same color as the one passed in.
-            return (distanceCounter == ClosingBracketDistance && _board[positionDown].Color == color);
+            return (position == ClosingBracketDistance && _board[pointInQuestion].Color == targetColor);
         }
 
     }
