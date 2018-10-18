@@ -21,8 +21,8 @@ namespace PenteGame.Lib.Tests.Controllers
             //arrange
             var game = new PenteController();
             var point = new Point();
-            point.x = 8;
-            point.y = 8;
+            point.x = 9;
+            point.y = 9;
             var piece = PieceColor.Black;
             //act
             game.TakeTurn(point, piece);
@@ -39,8 +39,8 @@ namespace PenteGame.Lib.Tests.Controllers
             //arrange
             var game = new PenteController();
             var point = new Point();
-            point.x = 8;
-            point.y = 8;
+            point.x = 9;
+            point.y = 9;
             var piece = PieceColor.Black;
             //act
             var IsValidMove = game.TakeTurn(point, piece);
@@ -71,8 +71,8 @@ namespace PenteGame.Lib.Tests.Controllers
             //arrange
             var game = new PenteController();
             var point = new Point();
-            point.x = 8;
-            point.y = 8;
+            point.x = 9;
+            point.y = 9;
             var piece = PieceColor.White;
 
             //act
@@ -311,8 +311,30 @@ namespace PenteGame.Lib.Tests.Controllers
         public void Fire_Win_Event_When_Five_Captures_Happen()
         {
             //arrange
-            Point[] blackPoints = { new Point(8, 5), new Point(11, 8), new Point(12, 8), new Point(11, 5), new Point(12, 5), new Point(15, 8), new Point(16, 8), new Point(15, 5), new Point(16, 5), new Point(19, 8) };
-            Point[] whitePoints = { new Point(9, 8), new Point(10, 8), new Point(9, 5), new Point(10, 5), new Point(13, 8), new Point(14, 8), new Point(13, 5), new Point(14, 5), new Point(17, 8), new Point(18, 8) };
+            Point[] blackPoints =
+                {
+                new Point(8, 5),
+                new Point(12, 9),
+                new Point(13, 9),
+                new Point(11, 5),
+                new Point(12, 5),
+                new Point(16, 9),
+                new Point(4, 5),
+                new Point(15, 5),
+                new Point(16, 5),
+                new Point(7, 5) };
+            Point[] whitePoints =
+                {
+                new Point(10, 9),
+                new Point(11, 9),
+                new Point(9, 5),
+                new Point(10, 5),
+                new Point(14, 9),
+                new Point(15, 9),
+                new Point(13, 5),
+                new Point(14, 5),
+                new Point(5, 5),
+                new Point(6, 5) };
             var game = StartGame();
             bool hasWon = false;
             game.Win += (color) => hasWon = true;
@@ -331,8 +353,8 @@ namespace PenteGame.Lib.Tests.Controllers
         public void Fire_Capture_Event_When_A_Horizontal_Capture_Is_Formed()
         {
             //arrange
-            Point[] blackPoints = { new Point(0, 0), new Point(7, 9), new Point(10, 9) };
-            Point[] whitePoints = { new Point(8, 9), new Point(9, 9), new Point(8, 10) };
+            Point[] blackPoints = { new Point(0, 0), new Point(6, 9) };
+            Point[] whitePoints = { new Point(7, 9), new Point(8, 9) };
             var game = StartGame();
             bool hasCaptured = false;
             game.Capture += (color) => hasCaptured = true;
@@ -349,12 +371,11 @@ namespace PenteGame.Lib.Tests.Controllers
         public void Fire_Capture_Event_When_A_Vertical_Capture_Is_Formed()
         {
             //arrange
-            Point[] blackPoints = { new Point(11, 8), new Point(8, 11) };
-            Point[] whitePoints = { new Point(8, 9), new Point(8, 10) };
+            Point[] blackPoints = { new Point(12, 9), new Point(9, 12) };
+            Point[] whitePoints = { new Point(9, 10), new Point(9, 11) };
             var game = StartGame();
             bool hasCaptured = false;
             game.Capture += (color) => hasCaptured = true;
-
             //act
             TakeTurnsWithPoints(game, whitePoints, blackPoints);
 
@@ -367,8 +388,8 @@ namespace PenteGame.Lib.Tests.Controllers
         public void Fire_Capture_Event_When_A_Diagonal_Capture_Is_Formed()
         {
             //arrange
-            Point[] blackPoints = { new Point(11, 8), new Point(11, 11) };
-            Point[] whitePoints = { new Point(9, 9), new Point(10, 10) };
+            Point[] blackPoints = { new Point(0, 0), new Point(12, 12) };
+            Point[] whitePoints = { new Point(10, 10), new Point(11, 11) };
             var game = StartGame();
             bool hasCaptured = false;
             game.Capture += (color) => hasCaptured = true;
@@ -439,8 +460,8 @@ namespace PenteGame.Lib.Tests.Controllers
         public void Update_Capture_Count_After_A_CaptureIs_Found()
         {
             //arrange
-            Point[] blackPoints = { new Point(0, 0), new Point(11, 8) };
-            Point[] whitePoints = { new Point(10, 8), new Point(9, 8) };
+            Point[] blackPoints = { new Point(0, 0), new Point(12, 9) };
+            Point[] whitePoints = { new Point(11, 9), new Point(10, 9) };
             var game = StartGame();
             int expected = 1;
             int actual;
@@ -480,8 +501,8 @@ namespace PenteGame.Lib.Tests.Controllers
         {
             var newGame = new PenteController();
             var point = new Point();
-            point.x = 8;
-            point.y = 8;
+            point.x = 9;
+            point.y = 9;
             var color = PieceColor.Black;
             newGame.TakeTurn(point, color);
             return newGame;
