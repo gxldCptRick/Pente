@@ -1,4 +1,5 @@
-﻿using PenteGame.Views.Intefaces;
+﻿using PenteGame.ViewModels;
+using PenteGame.Views.Intefaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,8 +39,12 @@ namespace PenteGame.Views
             PageChangeRequested.Invoke(PageRequest.Main);
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void RestartButtonClicked(object sender, RoutedEventArgs e)
         {
+            if(this.DataContext is MainPageData data)
+            {
+                
+            }
             PageChangeRequested.Invoke(PageRequest.Game);
         }
     }

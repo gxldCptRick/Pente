@@ -4,38 +4,37 @@ namespace PenteGame.ViewModels
 {
     internal class PlayerData : ViewModelBase
     {
+        private int _numberOfCaptures;
+        private int _numberOfWins;
         private string _name;
+        private PieceColor _color;
 
         public string Name
         {
             get => _name;
             set { _name = value; PropertyChanging(); }
         }
-
-        private int _numberOfWins;
-
-        public int NumberOfWins
-        {
-            get => _numberOfWins;
-            set { _numberOfWins = value; PropertyChanging(); }
-        }
-
-        private int _numberOfCaptures;
-
         public int NumberOfCaptures
         {
             get => _numberOfCaptures;
             set { _numberOfCaptures = value; PropertyChanging(); }
         }
-
-        private PieceColor _color;
-
+        public int NumberOfWins
+        {
+            get => _numberOfWins;
+            set { _numberOfWins = value; PropertyChanging(); }
+        }
         public PieceColor Color
         {
-            get { return _color; }
+            get => _color;
             set { _color = value; PropertyChanging(); }
         }
 
+        public PlayerData(PieceColor color)
+        {
+            Name = "";
+            Color = color;
+        }
 
     }
 }

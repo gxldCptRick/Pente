@@ -25,17 +25,5 @@ namespace PenteGame.Views.UserControls
         {
             InitializeComponent();
         }
-
-        private  static BitmapImage yes;
-
-        static PlayerControl()
-        {
-            yes = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + "/Resources/PurplePiece.png"));
-        }
-
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            this.otherThing.Source = yes;
-        }
     }
 }

@@ -4,18 +4,19 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PenteGame.Views.UserControls"
-             mc:Ignorable="d" 
-             Loaded="UserControl_Loaded"
+             xmlns:converters="clr-namespace:PenteGame.Converters"
+             mc:Ignorable="d"
              d:DesignHeight="150" d:DesignWidth="200">
+    <UserControl.Resources>
+        <converters:ColorToImageConverter x:Key="colorToImage" />
+    </UserControl.Resources>
     <StackPanel>
-        <Label Content="Name Of Player" FontSize="23" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Label Content="{Binding Name}" FontSize="23" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-            <Label FontSize="20"  VerticalAlignment="Center" HorizontalAlignment="Center" Content="Kills:" Foreground="MediumPurple"/>
-            <Label Foreground="MediumPurple" FontSize="20" Grid.Column="1" Margin="5" Content="5" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-            
+            <Label FontSize="20"  VerticalAlignment="Center" HorizontalAlignment="Center" Content="Caps:" Foreground="MediumPurple"/>
+            <Label Foreground="MediumPurple" FontSize="20" Grid.Column="1" Margin="5" Content="{Binding Path=NumberOfCaptures}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
         </StackPanel>
-        <Image Grid.Column="1" Name="otherThing" Margin=" 0 0 0 1"/>
-        
+        <Image Grid.Column="1" Source="{Binding Path=Color, Converter={StaticResource colorToImage}}" Name="otherThing" Margin=" 0 0 0 1"/>
     </StackPanel>
     <!--<Grid Background="LightGray">
         <Grid.RowDefinitions>
