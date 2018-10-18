@@ -1,11 +1,22 @@
 ﻿using PenteGame.Views.Intefaces;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
+using PenteGame.Lib.Models;
+using Point = PenteGame.Lib.Models.Point;
+using PenteGame.ViewModels;
+using PenteGame.Lib.Enums;
 
 namespace PenteGame.Views
 {
@@ -98,18 +109,20 @@ namespace PenteGame.Views
         {
             FillGrid();
         }
-		bool pTurn = true;
+		PieceColor PlayerColor = PieceColor.Black;
 		private void AddPiece(object sender, MouseButtonEventArgs e)
 		{
 			//On click, replace the fill with the right color 
 			Rectangle rect = (Rectangle)sender;
-			ImageSource graypiece = gray.ImageSource;
-			ImageSource purplepiece = purple.ImageSource;
-			ImageSource tile = ((ImageBrush)rect.Fill).ImageSource;
-			
-			if (!(tile.Equals(graypiece)) || !(tile == (purplepiece)))
+			bool success = true;
+			if (DataContext is MainPageData data)
 			{
-				if (pTurn)
+				success = data.Game.TakeTurn(GetPosition(rect), PlayerColor);
+			if (success)
+			{
+
+			
+				if (PlayerColor == PieceColor.Black)
 				{
 					rect.Fill = gray;
 				}
@@ -117,14 +130,16 @@ namespace PenteGame.Views
 				{
 					rect.Fill = purple;
 				}
-			pTurn = !pTurn;
-				GetPosition(rect);
+
+				PlayerColor = data.Game.CurrentTurn;
+				}
 			}
+			
 
 
 		}
 
-		private int GetPosition(Rectangle rect)
+		private Point GetPosition(Rectangle rect)
 		{
 			int rows = OptionsPage.GridSizeNum;
 			int columns = OptionsPage.GridSizeNum;
@@ -133,8 +148,9 @@ namespace PenteGame.Views
 
 			int row = index / columns;  // divide
 			int column = index % columns;  // modulus
-			Console.WriteLine("column " + column + "row " + row);
-			return 0;
+			Point coord = new Point(column, row);
+			Console.WriteLine("column " + column + " row " + row);
+			return coord;
 		}
 	}
 }
