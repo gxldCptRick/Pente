@@ -1,7 +1,9 @@
 ﻿using PenteGame.Lib.Enums;
+using PenteGame.Lib.Models;
 using PenteGame.ViewModels;
 using PenteGame.Views.Intefaces;
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -34,6 +36,7 @@ namespace PenteGame.Views
         private static ImageBrush upperRight = new ImageBrush(new BitmapImage(new Uri(@"./Resources/UpperRight.png", UriKind.Relative)));
         private static ImageBrush lowerLeft = new ImageBrush(new BitmapImage(new Uri(@"./Resources/LowerLeft.png", UriKind.Relative)));
         private static ImageBrush lowerRight = new ImageBrush(new BitmapImage(new Uri(@"./Resources/LowerRight.png", UriKind.Relative)));
+
         private void FillGrid()
         {
             //var colorBrush = new BrushConverter().ConvertFromString("#87A885") as SolidColorBrush;
@@ -86,9 +89,7 @@ namespace PenteGame.Views
                     {
                         rect.Fill = lowerRight;
                     }
-
-
-
+                    
                     rect.MouseDown += (s, e) => AddPiece(s, e);
                     GameGrid.Children.Add(rect);
                 }
@@ -100,7 +101,29 @@ namespace PenteGame.Views
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            this.GameGrid.Children.Clear();
             FillGrid();
+            if (this.DataContext is MainPageData data)
+            {
+                data.Game.Capture += (color) => 
+                {
+                    RemovePieces(data.Game.Pieces, data);
+                    data.Game.Removal.Clear();
+                };
+            }
+        }
+
+        private void RemovePieces(IEnumerable<GamePiece> pieces, MainPageData data)
+        {
+            this.GameGrid.Children.Clear();
+            FillGrid();
+
+            foreach (var piece in pieces)
+            {
+                int index = (piece.Point.y * data.GridSize) + piece.Point.x;
+                Console.WriteLine($"value: {index} ");
+                (this.GameGrid.Children[index] as Rectangle).Fill = piece.Color == PieceColor.Black ? gray : purple;  
+            }
         }
 
         private PieceColor PlayerColor = PieceColor.Black;
@@ -113,24 +136,10 @@ namespace PenteGame.Views
             {
                 var positionOnScreen = GetPosition(rect);
                 validMoveMade = data.Game.TakeTurn(positionOnScreen, PlayerColor);
-                Console.WriteLine($"column {positionOnScreen.x}  row {positionOnScreen.y} color");
-                if (validMoveMade && (rect.Fill != gray && rect.Fill != purple))
-                {
-                    if (PlayerColor == PieceColor.Black)
-                    {
-                        rect.Fill = gray;
-                    }
-                    else
-                    {
-                        rect.Fill = purple;
-                    }
+                PlayerColor = data.Game.CurrentTurn;
+                RemovePieces(data.Game.Pieces, data);
+            }
 
-
-				
-				PlayerColor = data.Game.CurrentTurn;
-				}
-			}
-			
 
 
         }
@@ -139,9 +148,7 @@ namespace PenteGame.Views
         {
             int rows = OptionsPage.GridSizeNum;
             int columns = OptionsPage.GridSizeNum;
-
             int index = GameGrid.Children.IndexOf(rect);
-
             int row = index / columns;  // divide
             int column = index % columns;  // modulus
             Point coord = new Point(column, row);
@@ -150,10 +157,10 @@ namespace PenteGame.Views
 
         private void ResetButton(object sender, RoutedEventArgs e)
         {
-            if(this.DataContext is MainPageData data)
+            if (DataContext is MainPageData data)
             {
                 data.Game.ResetGame();
-                this.GameGrid.Children.Clear();
+                GameGrid.Children.Clear();
                 FillGrid();
             }
         }
