@@ -29,7 +29,6 @@ namespace PenteGame.Lib.Controllers
                 }
             }
         }
-
         public int Height
         {
             get => _height;
@@ -103,12 +102,11 @@ namespace PenteGame.Lib.Controllers
         /// <param name="placement">the newest move</param>
         /// <param name="color">color of the piece being placed</param>
         /// <returns>whether or not the turn was valid.</returns>
-        public bool TakeTurn(Point placement, PieceColor color) //Returns bool result depending on the validity of the position
+        public bool TakeTurn(Point placement, PieceColor color) 
         {
             bool isValidMove = false;
-            if (!_board.ContainsKey(placement) &&
+            if (!IsPieceAtPoint(placement) &&
                 color == CurrentTurn &&
-                IsPointOnBoard(placement) &&
                 ((!_firstMoveHasBeenMade && CheckIfCenterPoint(placement)) || _firstMoveHasBeenMade))
             {
                 _firstMoveHasBeenMade = true;

@@ -43,7 +43,7 @@ namespace PenteGame.Views
         {
             if(this.DataContext is MainPageData data)
             {
-                
+                data.Game.ResetGame();
             }
             PageChangeRequested.Invoke(PageRequest.Game);
         }

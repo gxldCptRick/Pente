@@ -18,22 +18,4 @@
         </StackPanel>
         <Image Grid.Column="1" Source="{Binding Path=Color, Converter={StaticResource colorToImage}}" Name="otherThing" Margin=" 0 0 0 1"/>
     </StackPanel>
-    <!--<Grid Background="LightGray">
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width=".9*"/>
-                    <ColumnDefinition Width=".4*"/>
-                </Grid.ColumnDefinitions>
-            </Grid>
-        </Grid>
-    </Grid>-->
 </UserControl>
