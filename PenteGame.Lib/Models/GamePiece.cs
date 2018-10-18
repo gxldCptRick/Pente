@@ -18,6 +18,12 @@ namespace PenteGame.Lib.Models
             this.Point = point;
         }
 
+        public override string ToString()
+        {
+            return $"{this.Color} {this.Point}";
+        }
+
+
         public override int GetHashCode()
         {
             return Point.GetHashCode() ^ Color.GetHashCode();

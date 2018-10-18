@@ -43,6 +43,7 @@ namespace PenteGame.Lib.Controllers
 
         public PieceColor CurrentTurn { get; set; }
         public IEnumerable<GamePiece> Pieces => _board.Values;
+        public List<Point> Removal { get; set; }
 
         public event Action<PieceColor> Tessara;
         public event Action<PieceColor> Tria;
@@ -61,6 +62,11 @@ namespace PenteGame.Lib.Controllers
                 if (_captures[color] >= 5)
                 {
                     Win?.Invoke(color);
+                }
+
+                foreach (var pointToRemove in Removal)
+                {
+                    _board.Remove(pointToRemove);
                 }
             };
             ResetGame();
@@ -272,8 +278,8 @@ namespace PenteGame.Lib.Controllers
             if (totalFound == MaxDistanceForCapture)
             {
                 Capture?.Invoke(_board[originPoint].Color);
-                _board.Remove(calculateNextPoint(originPoint, 1));
-                _board.Remove(calculateNextPoint(originPoint, 2));
+                Removal.Add(calculateNextPoint(originPoint, 1));
+                Removal.Add(calculateNextPoint(originPoint, 2));
             }
         }
 

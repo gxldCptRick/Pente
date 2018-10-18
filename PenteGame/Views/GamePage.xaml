@@ -33,7 +33,7 @@
                 <Label Grid.Row="1" Content="|100 - -0|" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center"></Label>
                 <Label Grid.Row="2" Content="This is another label" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center"></Label>
             </Grid>
-
+            <Button Click="ResetButton" Content="Reset"/>
         </Grid>
         <Grid Name="BoardGrid" Grid.Row="1">
             <Grid.ColumnDefinitions>
