@@ -9,6 +9,7 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Loaded="Page_Loaded"
+      Unloaded="Page_Unloaded"
       Title="GamePage">
     <Grid Background="LightGray">
         <Grid.RowDefinitions>
@@ -29,10 +30,10 @@
                     <RowDefinition/>
                     <!--<RowDefinition/>-->
                 </Grid.RowDefinitions>
-                <Label FontSize="25" x:Name="timerLabel" Grid.Row="0" Content="20" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center"></Label>
+                <Label FontSize="25" x:Name="timerLabel" Grid.Row="0" Content="{Binding Path=TimerCount}" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center"></Label>
                 <Label Grid.Row="1" Content="|100 - - 0|" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center"></Label>
             </Grid>
-            <Button Click="ResetButton" Content="Reset"/>
+            <Button BorderBrush="#87A885" BorderThickness="2.3" Background="#C4C4BD" Margin="60, 20" FontSize="20" Content="Reset" Foreground="MediumPurple"  Click="ResetButton"/>
         </Grid>
         <Grid Name="BoardGrid" Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -45,7 +46,7 @@
             <Canvas Grid.Column="1" Name="PieceGrid"/>
             <UniformGrid  Grid.Column="1" Name="GameGrid" Columns="{Binding ActualHeight, ElementName=OptionsPage.AlsoGridSize, Mode=OneWay}" Rows="{Binding ActualHeight, ElementName=OptionsPage.AlsoGridSize, Mode=OneWay}" Width="{Binding ActualHeight, ElementName=BoardGrid, Mode=OneWay}" Height="{Binding ActualHeight, ElementName=BoardGrid, Mode=OneWay}"/>
 
-            <uc:PlayerControl DataContext="{Binding PlayerOne}" x:Name="PlayerOneDisply"  Grid.Column="0"/>
+            <uc:PlayerControl DataContext="{Binding PlayerOne}" x:Name="PlayerOneDisplay"  Grid.Column="0"/>
             <uc:PlayerControl DataContext="{Binding PlayerTwo}" x:Name="PlayerTwoDisplay"  Grid.Column="2"/>
         </Grid>
         <Grid></Grid>

@@ -9,15 +9,14 @@
              d:DesignHeight="150" d:DesignWidth="200">
     <UserControl.Resources>
         <converters:ColorToImageConverter x:Key="colorToImage" />
+        <converters:PieceColorToActualColorConverter x:Key="colorToColor"/>
     </UserControl.Resources>
     <StackPanel>
-        <Label Content="{Binding Name}" FontSize="23" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Label Content="{Binding Name}" FontSize="23" VerticalAlignment="Center" Foreground="{Binding Path=Color, Converter={StaticResource colorToColor}}" HorizontalAlignment="Center"/>
         <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-            <Label FontSize="20"  VerticalAlignment="Center" HorizontalAlignment="Center" Content="Caps:" Foreground="MediumPurple"/>
-            <Label Foreground="MediumPurple" FontSize="20" Grid.Column="1" Margin="5" Content="{Binding Path=NumberOfCaptures}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <Label FontSize="20"  VerticalAlignment="Center" HorizontalAlignment="Center" Content="Caps:" Foreground="{Binding Path=Color, Converter={StaticResource colorToColor}}"/>
+            <Label Foreground="{Binding Path=Color, Converter={StaticResource colorToColor}}" FontSize="20" Grid.Column="1" Margin="5" Content="{Binding Path=NumberOfCaptures}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
         </StackPanel>
-        <Border HorizontalAlignment="Center" Name="Highlight" >
-            <Image Grid.Column="1" Source="{Binding Path=Color, Converter={StaticResource colorToImage}}" Width="100" Height="100" Name="otherThing" Margin=" 0 0 0 1"/>
-        </Border>
+        <Image Grid.Column="1" Source="{Binding Path=Color, Converter={StaticResource colorToImage}}" Name="otherThing" Margin=" 0 0 0 1"/>
     </StackPanel>
 </UserControl>

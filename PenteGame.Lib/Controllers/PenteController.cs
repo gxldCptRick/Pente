@@ -18,6 +18,8 @@ namespace PenteGame.Lib.Controllers
         private int _width;
         private bool _firstMoveHasBeenMade;
         private bool gameIsOver;
+        private PieceColor _currentTurn;
+
         public int Width
         {
             get => _width;
@@ -40,11 +42,20 @@ namespace PenteGame.Lib.Controllers
                 }
             }
         }
-
-        public PieceColor CurrentTurn { get; set; }
+        public GameMode CurrentMode { get; set; }
+        public PieceColor CurrentTurn
+        {
+            get => _currentTurn;
+            set
+            {
+                _currentTurn = value;
+                TurnChanging?.Invoke(_currentTurn);
+            }
+        }
         public IEnumerable<GamePiece> Pieces => _board.Values;
         public List<Point> Removal { get; set; } = new List<Point>();
 
+        public event Action<PieceColor> TurnChanging;
         public event Action<PieceColor> Tessara;
         public event Action<PieceColor> Tria;
         public event Action<PieceColor> Win;
@@ -56,6 +67,7 @@ namespace PenteGame.Lib.Controllers
             _captures = new Dictionary<PieceColor, int>();
             Width = 19;
             Height = 19;
+            CurrentMode = GameMode.SinglePlayer;
             Capture += (color) =>
             {
                 _captures[color]++;
@@ -110,20 +122,65 @@ namespace PenteGame.Lib.Controllers
         /// <param name="placement">the newest move</param>
         /// <param name="color">color of the piece being placed</param>
         /// <returns>whether or not the turn was valid.</returns>
-        public bool TakeTurn(Point placement, PieceColor color) 
+        public bool TakeTurn(Point placement, PieceColor color)
         {
             bool isValidMove = false;
-            if (!IsPieceAtPoint(placement) &&
-                color == CurrentTurn &&
-                ((!_firstMoveHasBeenMade && CheckIfCenterPoint(placement)) || _firstMoveHasBeenMade))
+            if (IsValidMove(placement, color))
             {
                 _firstMoveHasBeenMade = true;
                 isValidMove = true;
-                _board[placement] = new GamePiece(placement, color);
-                CoordinateMoves(placement);
-                SwitchTurn();
+                ProccessTurn(placement, color);
+                if (CurrentMode == GameMode.SinglePlayer)
+                {
+                    RunComputerTurn();
+                }
+
             }
             return isValidMove;
+        }
+
+        private void ProccessTurn(Point placement, PieceColor color)
+        {
+            _board[placement] = new GamePiece(placement, color);
+            CoordinateMoves(placement);
+            SwitchTurn();
+
+        }
+
+        private bool IsValidMove(Point placement, PieceColor color)
+        {
+            return !IsPieceAtPoint(placement) &&
+                color == CurrentTurn &&
+                IsFirstMoveDone(placement, color);
+        }
+
+        private bool IsFirstMoveDone(Point placement, PieceColor color)
+        {
+            return ((!_firstMoveHasBeenMade && CheckIfCenterPoint(placement)) || _firstMoveHasBeenMade);
+        }
+
+        private void RunComputerTurn()
+        {
+            if (!gameIsOver)
+            {
+                Point placement;
+                do
+                {
+                    placement = GeneratePoint();
+                } while (!IsValidMove(placement, PieceColor.White));
+                ProccessTurn(placement, PieceColor.White);
+            }
+        }
+
+        private Random rnJesus = new Random();
+
+        private Point GeneratePoint()
+        {
+            return new Point()
+            {
+                x = rnJesus.Next(0, Width + 1),
+                y = rnJesus.Next(0, Height + 1)
+            };
         }
 
         /// <summary>
@@ -139,7 +196,7 @@ namespace PenteGame.Lib.Controllers
 
         public Point GenerateCenter()
         {
-            return new Point(Width / 2, Height / 2); 
+            return new Point(Width / 2, Height / 2);
         }
 
         /// <summary>
@@ -147,8 +204,7 @@ namespace PenteGame.Lib.Controllers
         /// </summary>
         public void SwitchTurn()
         {
-            if(!gameIsOver)
-                CurrentTurn = CurrentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White;
+            if (!gameIsOver) CurrentTurn = CurrentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White;
         }
 
         /// <summary>

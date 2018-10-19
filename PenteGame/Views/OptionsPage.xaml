@@ -6,6 +6,7 @@
       xmlns:local="clr-namespace:PenteGame.Views"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
+      Unloaded="Page_Unloaded"
       Title="OptionsPage">
 
     <Grid Background="LightGray">
@@ -21,8 +22,8 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <RadioButton GroupName="GameMode" Foreground="MediumPurple" FontSize="25" VerticalAlignment="Bottom" HorizontalAlignment="Center" IsChecked="True" Content="One Player" VerticalContentAlignment="Center"/>
-            <RadioButton Grid.Column="1" Foreground="MediumPurple" FontSize="25" VerticalAlignment="Bottom" HorizontalAlignment="Center" GroupName="GameMode" Content="Two Player" VerticalContentAlignment="Center"/>
+            <RadioButton Name="SinglePlayer" GroupName="GameMode" Foreground="MediumPurple" FontSize="25" VerticalAlignment="Bottom" HorizontalAlignment="Center" IsChecked="True" Content="One Player" VerticalContentAlignment="Center"/>
+            <RadioButton Name="MultiPlayer" Grid.Column="1" Foreground="MediumPurple" FontSize="25" VerticalAlignment="Bottom" HorizontalAlignment="Center" GroupName="GameMode" Content="Two Player" VerticalContentAlignment="Center"/>
         </Grid>
 
         <Grid Grid.Row="2">

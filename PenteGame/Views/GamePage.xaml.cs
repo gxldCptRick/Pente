@@ -1,12 +1,14 @@
-﻿using PenteGame.Lib.Enums;
+﻿using PenteGame.Converters;
+using PenteGame.Lib.Enums;
 using PenteGame.Lib.Models;
 using PenteGame.ViewModels;
 using PenteGame.Views.Intefaces;
 using System;
-using System.Timers;
 using System.Collections.Generic;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -93,7 +95,7 @@ namespace PenteGame.Views
                     {
                         rect.Fill = lowerRight;
                     }
-                    
+
                     rect.MouseDown += (s, e) => AddPiece(s, e);
                     GameGrid.Children.Add(rect);
                 }
@@ -104,23 +106,70 @@ namespace PenteGame.Views
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            this.GameGrid.Children.Clear();
+            GameGrid.Children.Clear();
             FillGrid();
-            if (this.DataContext is MainPageData data)
+            if (DataContext is MainPageData data)
             {
+                if (timer is null)
+                {
+                    timer = new Timer();
+                    timer.Interval = 1000;
+                    timer.Elapsed += OnTimedEvent;
+                }
+                UpdateHighlight();
+                DrawPieces(data.Game.Pieces, data);
                 if (!hasBeenSet)
                 {
+                    hasBeenSet = true;
                     data.Game.Capture += (color) =>
                     {
-                        RemovePieces(data.Game.Pieces, data);
+                        DrawPieces(data.Game.Pieces, data);
                         data.Game.Removal.Clear();
+                        if (color == PieceColor.Black) data.PlayerOne.NumberOfCaptures = data.Game.GetTotalCaptures(color);
+                        else data.PlayerTwo.NumberOfCaptures = data.Game.GetTotalCaptures(color);
                     };
 
                     data.Game.Tria += (color) => MessageBox.Show($"{TranslateColor(color)} has formed a tria");
                     data.Game.Tessara += (color) => MessageBox.Show($"{TranslateColor(color)} has formed a tessera");
                     data.Game.Win += (color) => PageChangeRequested?.Invoke(PageRequest.GameOver);
+                    data.PropertyChanged += (s, eve) =>
+                    {
+                        if (eve.PropertyName == nameof(data.CurrentTurn))
+                        {
+                            UpdateHighlight();
+                            ResetTimer();
+                            DrawPieces(data.Game.Pieces, data);
+                        }
+                    };
                 }
             }
+        }
+
+        private void ResetTimer()
+        {
+            if (DataContext is MainPageData data)
+            {
+                timer.Stop();
+                data.TimerCount = 20;
+            }
+        }
+        private static IValueConverter colorToColor = new PieceColorToActualColorConverter();
+        private void UpdateHighlight()
+        {
+            if (DataContext is MainPageData data)
+            {
+                if (data.CurrentTurn == PieceColor.Black)
+                {
+                    PlayerOneDisplay.Background = Brushes.Yellow;
+                    PlayerTwoDisplay.Background = colorToColor.Convert(PieceColor.Black, typeof(Brush), null, null) as Brush;
+                }
+                else
+                {
+                    PlayerOneDisplay.Background = colorToColor.Convert(PieceColor.White, typeof(Brush), null, null) as Brush;
+                    PlayerTwoDisplay.Background = Brushes.Yellow;
+                }
+            }
+
         }
 
         private string TranslateColor(PieceColor color)
@@ -128,33 +177,17 @@ namespace PenteGame.Views
             return color == PieceColor.Black ? "gray" : "purple";
         }
 
-        private void RemovePieces(IEnumerable<GamePiece> pieces, MainPageData data)
+        private void DrawPieces(IEnumerable<GamePiece> pieces, MainPageData data)
         {
-            this.GameGrid.Children.Clear();
+            GameGrid.Children.Clear();
             FillGrid();
-            timer = new System.Timers.Timer(1000);
-            timer.Elapsed += OnTimedEvent;
-            timer.AutoReset = true;
-            timer.Enabled = true;
-            timer.Start();
-            Dispatcher.Invoke(() =>
-            {
-
-                PlayerOneDisply.Highlight.Background = Brushes.Black;
-                PlayerTwoDisplay.Highlight.Background = Brushes.Transparent;
-
-            });
-            }
-
             foreach (var piece in pieces)
             {
                 int index = (piece.Point.y * data.GridSize) + piece.Point.x;
-                Console.WriteLine($"value: {index} ");
-                (this.GameGrid.Children[index] as Rectangle).Fill = piece.Color == PieceColor.Black ? gray : purple;  
+                (GameGrid.Children[index] as Rectangle).Fill = piece.Color == PieceColor.Black ? gray : purple;
             }
         }
 
-        private PieceColor PlayerColor = PieceColor.Black;
         private void AddPiece(object sender, MouseButtonEventArgs e)
         {
             //On click, replace the fill with the right color 
@@ -163,30 +196,14 @@ namespace PenteGame.Views
             if (DataContext is MainPageData data)
             {
                 Point positionOnScreen = GetPosition(rect);
-                validMoveMade = data.Game.TakeTurn(positionOnScreen, PlayerColor);
-                Console.WriteLine($"column {positionOnScreen.x}  row {positionOnScreen.y} color");
-                if (validMoveMade && (rect.Fill != gray && rect.Fill != purple))
+                validMoveMade = data.Game.TakeTurn(positionOnScreen, data.CurrentTurn);
+                DrawPieces(data.Game.Pieces, data);
+                if (validMoveMade)
                 {
-                    if (PlayerColor == PieceColor.Black)
-                    {
-                        rect.Fill = gray;
-                    }
-                    else
-                    {
-                        rect.Fill = purple;
-                    }
-
-
-
-                    PlayerColor = data.Game.CurrentTurn;
+                    timer.Start();
+                    UpdateHighlight();
                 }
             }
-                PlayerColor = data.Game.CurrentTurn;
-                RemovePieces(data.Game.Pieces, data);
-            }
-
-
-
         }
 
         private Point GetPosition(Rectangle rect)
@@ -206,44 +223,31 @@ namespace PenteGame.Views
             {
                 data.Game.ResetGame();
                 GameGrid.Children.Clear();
+                ResetTimer();
                 FillGrid();
             }
         }
 
-        int time = 20;
         private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
-            time -= 1;
             Dispatcher.Invoke(() =>
             {
-                timerLabel.Content = time.ToString();
-            });
-            if (time == 0)
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    if (PlayerColor == PieceColor.Black)
-                    {
-                        PlayerOneDisply.Highlight.Background = Brushes.Transparent;
-                        PlayerTwoDisplay.Highlight.Background = Brushes.Black;
-                        
-                    }
-                    else
-                    {
-
-                        PlayerOneDisply.Highlight.Background = Brushes.Black;
-                        PlayerTwoDisplay.Highlight.Background = Brushes.Transparent;
-                    }
                 if (DataContext is MainPageData data)
                 {
-                    data.Game.SwitchTurn();
-                        PlayerColor = data.Game.CurrentTurn;
+                    data.TimerCount--;
+                    if (data.TimerCount == 0)
+                    {
+                        data.TimerCount = 20;
+                        data.Game.SwitchTurn();
+                    }
                 }
-                });
-                //toggle current turn
-                time = 20;
-            }
-            //set timer label to timer.tostring
+            });
+
+        }
+
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            timer.Stop();
         }
     }
 }
