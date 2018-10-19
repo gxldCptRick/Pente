@@ -3,19 +3,9 @@ using PenteGame.Lib.Enums;
 using PenteGame.ViewModels;
 using PenteGame.Views.Intefaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace PenteGame.Views
 {
@@ -38,34 +28,39 @@ namespace PenteGame.Views
 
         private void NewGameButtonClicked(object sender, RoutedEventArgs e)
         {
+            if (DataContext is MainPageData data)
+            {
+                data.ResetGame();
+            }
+
             PageChangeRequested.Invoke(PageRequest.Main);
         }
 
         private void RestartButtonClicked(object sender, RoutedEventArgs e)
         {
-            if(this.DataContext is MainPageData data)
+            if (DataContext is MainPageData data)
             {
-                data.Game.ResetGame();
+                data.ResetGame();
             }
             PageChangeRequested.Invoke(PageRequest.Game);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            if(this.DataContext is MainPageData data)
+            if (DataContext is MainPageData data)
             {
                 var fightMEDean = new PieceColorToActualColorConverter();
                 switch (data.Game.CurrentTurn)
                 {
                     case Lib.Enums.PieceColor.Black:
-                        this.winnerLabel.Content = $"{data.PlayerOne.Name} Wins!";
-                        this.winnerLabel.Foreground = fightMEDean.Convert(PieceColor.Black,null,null,null) as Brush;
-                        this.winnerLabel.Background = fightMEDean.Convert(PieceColor.White, null, null, null) as Brush;
+                        winnerLabel.Content = $"{data.PlayerOne.Name} Wins!";
+                        winnerLabel.Foreground = fightMEDean.Convert(PieceColor.Black, null, null, null) as Brush;
+                        winnerLabel.Background = fightMEDean.Convert(PieceColor.White, null, null, null) as Brush;
                         break;
                     case Lib.Enums.PieceColor.White:
-                        this.winnerLabel.Content = $"{data.PlayerTwo.Name} Wins!";
-                        this.winnerLabel.Foreground = fightMEDean.Convert(PieceColor.White, null, null, null) as Brush;
-                        this.winnerLabel.Background = fightMEDean.Convert(PieceColor.Black, null, null, null) as Brush;
+                        winnerLabel.Content = $"{data.PlayerTwo.Name} Wins!";
+                        winnerLabel.Foreground = fightMEDean.Convert(PieceColor.White, null, null, null) as Brush;
+                        winnerLabel.Background = fightMEDean.Convert(PieceColor.Black, null, null, null) as Brush;
                         break;
                     default:
                         break;

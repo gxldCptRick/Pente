@@ -15,10 +15,18 @@ namespace PenteGame.ViewModels
         public int TimerCount
         {
             get => _timerCount;
-            set { _timerCount = value; PropertyChanging(); }
+            set
+            {
+                _timerCount = value;
+                if (value == 0)
+                {
+                    Game.SwitchTurn();
+                }
+                PropertyChanging();
+            }
         }
 
-        public PieceColor CurrentTurn { get => Game.CurrentTurn; }
+        public PieceColor CurrentTurn => Game.CurrentTurn;
 
         public PlayerData PlayerOne
         {
@@ -57,10 +65,26 @@ namespace PenteGame.ViewModels
             PlayerTwo = new PlayerData(PieceColor.White);
             PlayerTwo.Name = "Player Two";
             _mainGameController = new PenteController();
+            UpdateCaptureValues();
             _mainGameController.TurnChanging += TurnChanged;
         }
 
-        private void TurnChanged(PieceColor color) => PropertyChanging(nameof(CurrentTurn));
+        public void ResetGame()
+        {
+            Game.ResetGame();
+            UpdateCaptureValues();
+            TimerCount = 20;
+        }
 
+        public void UpdateCaptureValues()
+        {
+            PlayerOne.NumberOfCaptures = Game.GetTotalCaptures(PieceColor.Black);
+            PlayerTwo.NumberOfCaptures = Game.GetTotalCaptures(PieceColor.White);
+        }
+
+        private void TurnChanged(PieceColor color)
+        {
+            PropertyChanging(nameof(CurrentTurn));
+        }
     }
 }
