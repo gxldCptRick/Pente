@@ -132,15 +132,14 @@ namespace PenteGame.Views
                         data.UpdateCaptureValues();
                     };
                     //setting up for all the main events in the game.
-                    data.Game.Tria += (color) => MessageBox.Show($"{TranslateColor(color)} has formed a tria");
-                    data.Game.Tessara += (color) => MessageBox.Show($"{TranslateColor(color)} has formed a tessera");
+
                     data.Game.Win += (color) => PageChangeRequested?.Invoke(PageRequest.GameOver);
                     //hijacking the property changed event in order to update the highlight and stop the timer when we change the current turn.
                     data.PropertyChanged += (s, eve) =>
                     {
                         if (eve.PropertyName == nameof(data.CurrentTurn))
                         {
-                            timer.Stop();
+                            //timer.Stop();
                             UpdateHighlight();
                             DrawPieces(data.Game.Pieces, data);
                         }
@@ -155,42 +154,44 @@ namespace PenteGame.Views
         private static IValueConverter colorToColor = new PieceColorToActualColorConverter();
         private void UpdateHighlight()
         {
-            if (DataContext is MainPageData data)
+            Dispatcher.Invoke(() =>
             {
-                //if it is the turn paint it yellow if it is not paint it the opposing teams color for the background.
-                if (data.CurrentTurn == PieceColor.Black)
+                if (DataContext is MainPageData data)
                 {
-                    PlayerOneDisplay.Background = Brushes.Yellow;
-                    PlayerTwoDisplay.Background = colorToColor.Convert(PieceColor.Black, typeof(Brush), null, null) as Brush;
+                    //if it is the turn paint it yellow if it is not paint it the opposing teams color for the background.
+                    if (data.CurrentTurn == PieceColor.Black)
+                    {
+                        PlayerOneDisplay.Background = Brushes.Yellow;
+                        PlayerTwoDisplay.Background = colorToColor.Convert(PieceColor.Black, typeof(Brush), null, null) as Brush;
+                    }
+                    else
+                    {
+                        PlayerOneDisplay.Background = colorToColor.Convert(PieceColor.White, typeof(Brush), null, null) as Brush;
+                        PlayerTwoDisplay.Background = Brushes.Yellow;
+                    }
                 }
-                else
-                {
-                    PlayerOneDisplay.Background = colorToColor.Convert(PieceColor.White, typeof(Brush), null, null) as Brush;
-                    PlayerTwoDisplay.Background = Brushes.Yellow;
-                }
-            }
-
+            });
         }
         /// <summary>
         /// used to transform the enum of piece color to the actual name used for display purposes.
         /// </summary>
         /// <param name="color">color that we want to translate</param>
         /// <returns>the name of the color in the current context</returns>
-        private string TranslateColor(PieceColor color)
-        {
-            return color == PieceColor.Black ? "gray" : "purple";
-        }
+
 
         private void DrawPieces(IEnumerable<GamePiece> pieces, MainPageData data)
         {
-            GameGrid.Children.Clear();
-            FillGrid();
-
-            foreach (var piece in pieces)
+            Dispatcher.Invoke(() =>
             {
-                int index = (piece.Point.y * data.GridSize) + piece.Point.x;
-                (GameGrid.Children[index] as Rectangle).Fill = piece.Color == PieceColor.Black ? gray : purple;
-            }
+                GameGrid.Children.Clear();
+                FillGrid();
+
+                foreach (var piece in pieces)
+                {
+                    int index = (piece.Point.y * data.GridSize) + piece.Point.x;
+                    (GameGrid.Children[index] as Rectangle).Fill = piece.Color == PieceColor.Black ? gray : purple;
+                }
+            });
         }
 
         private void AddPiece(object sender, MouseButtonEventArgs e)
@@ -199,14 +200,23 @@ namespace PenteGame.Views
             Rectangle rect = (Rectangle)sender;
             if (DataContext is MainPageData data)
             {
+                bool validMoveMade;
                 Point positionOnScreen = GetPosition(rect);
-                bool validMoveMade = data.Game.TakeTurn(positionOnScreen, data.CurrentTurn);
-                DrawPieces(data.Game.Pieces, data);
-                if (validMoveMade)
+                if (data.Game.CurrentMode == GameMode.SinglePlayer)
                 {
-                    timer.Start();
-                    UpdateHighlight();
+                    validMoveMade = data.Game.TakeTurn(positionOnScreen, data.PlayerOne.Color);
                 }
+                else
+                {
+                    validMoveMade = data.Game.TakeTurn(positionOnScreen, data.CurrentTurn);
+                }
+                    DrawPieces(data.Game.Pieces, data);
+                    if (validMoveMade)
+                    {
+                        timer.Start();
+                        UpdateHighlight();
+                        data.Game.RunComputerTurn();
+                    }
             }
         }
 
@@ -240,6 +250,7 @@ namespace PenteGame.Views
                     if (data.TimerCount == 0)
                     {
                         data.TimerCount = 20;
+                        data.Game.SwitchTurn();
                     }
                 }
             });
