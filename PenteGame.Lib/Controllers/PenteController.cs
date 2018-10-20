@@ -2,6 +2,8 @@
 using PenteGame.Lib.Models;
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace PenteGame.Lib.Controllers
 {
@@ -50,10 +52,11 @@ namespace PenteGame.Lib.Controllers
             {
                 _currentTurn = value;
                 TurnChanging?.Invoke(_currentTurn);
+
             }
         }
         public IEnumerable<GamePiece> Pieces => _board.Values;
-        
+
         public event Action<PieceColor> TurnChanging;
         public event Action<PieceColor> Tessara;
         public event Action<PieceColor> Tria;
@@ -124,10 +127,6 @@ namespace PenteGame.Lib.Controllers
                 _firstMoveHasBeenMade = true;
                 isValidMove = true;
                 ProccessTurn(placement, color);
-                if (CurrentMode == GameMode.SinglePlayer)
-                {
-                    RunComputerTurn();
-                }
 
             }
             return isValidMove;
@@ -138,12 +137,12 @@ namespace PenteGame.Lib.Controllers
             _board[placement] = new GamePiece(placement, color);
             CoordinateMoves(placement);
             SwitchTurn();
-
         }
 
         private bool IsValidMove(Point placement, PieceColor color)
         {
-            return !IsPieceAtPoint(placement) &&
+            return IsPointOnBoard(placement) &&
+                !_board.ContainsKey(placement) &&
                 color == CurrentTurn &&
                 IsFirstMoveDone(placement, color);
         }
@@ -153,16 +152,20 @@ namespace PenteGame.Lib.Controllers
             return ((!_firstMoveHasBeenMade && CheckIfCenterPoint(placement)) || _firstMoveHasBeenMade);
         }
 
-        private void RunComputerTurn()
+        public void RunComputerTurn()
         {
-            if (!gameIsOver)
+            if (!gameIsOver && CurrentTurn == PieceColor.White && CurrentMode == GameMode.SinglePlayer)
             {
-                Point placement;
-                do
+                Task.Run(() =>
                 {
-                    placement = GeneratePoint();
-                } while (!IsValidMove(placement, PieceColor.White));
-                ProccessTurn(placement, PieceColor.White);
+                    Point placement;
+                    do
+                    {
+                        placement = GeneratePoint();
+                    } while (!IsValidMove(placement, PieceColor.White));
+                    Thread.Sleep(1000);
+                    ProccessTurn(placement, PieceColor.White);
+                });
             }
         }
 
@@ -172,8 +175,8 @@ namespace PenteGame.Lib.Controllers
         {
             return new Point()
             {
-                x = rnJesus.Next(0, Width + 1),
-                y = rnJesus.Next(0, Height + 1)
+                x = rnJesus.Next(0, Width),
+                y = rnJesus.Next(0, Height)
             };
         }
 
@@ -198,7 +201,11 @@ namespace PenteGame.Lib.Controllers
         /// </summary>
         public void SwitchTurn()
         {
-            if (!gameIsOver) CurrentTurn = CurrentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White;
+            if (!gameIsOver)
+            {
+                CurrentTurn = CurrentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White;
+
+            }
         }
 
         /// <summary>
@@ -351,20 +358,31 @@ namespace PenteGame.Lib.Controllers
         /// <param name="originPoint">the point of reference to work with.</param>
         private void ProccessThePatterns(Func<Point, Point> firstPattern, Func<Point, Point> secondPattern, Point originPoint)
         {
-            int amountFound = CountAllNeighborsFollowingAGivenSequence(firstPattern, originPoint, 1);
-            amountFound = CountAllNeighborsFollowingAGivenSequence(secondPattern, originPoint, amountFound);
-            if (amountFound > 4)
+            (int intialAmountFound, Cause firstCause) = CountAllNeighborsFollowingAGivenSequence(firstPattern, originPoint, 1);
+            (int finalAmountFound, Cause secondCause) = CountAllNeighborsFollowingAGivenSequence(secondPattern, originPoint, intialAmountFound);
+            if (finalAmountFound > 4)
             {
                 Win?.Invoke(_board[originPoint].Color);
             }
-            else if (amountFound > 3)
+            else if(firstCause == Cause.EmptySpace && secondCause == Cause.EmptySpace)
             {
-                Tessara?.Invoke(_board[originPoint].Color);
+                if (finalAmountFound == 4)
+                {
+                    Tessara?.Invoke(_board[originPoint].Color);
+                }
+                else if (finalAmountFound == 3)
+                {
+                    Tria?.Invoke(_board[originPoint].Color);
+                }else
+                {
+                    ProccessSpecialCaseTria(firstPattern, secondPattern, originPoint, finalAmountFound);
+                }
             }
-            else if (amountFound > 2)
-            {
-                Tria?.Invoke(_board[originPoint].Color);
-            }
+        }
+
+        private void ProccessSpecialCaseTria(Func<Point, Point> firstPattern, Func<Point, Point> secondPattern, Point originPoint, int finalAmountFound)
+        {
+           //TODO: special tria logic
         }
 
         /// <summary>
@@ -375,17 +393,33 @@ namespace PenteGame.Lib.Controllers
         /// <param name="initialPoint">the starting point</param>
         /// <param name="initialAmount">the inital amount to work with</param>
         /// <returns></returns>
-        private int CountAllNeighborsFollowingAGivenSequence(Func<Point, Point> calculateNextPoint, Point initialPoint, int initialAmount)
+        private (int, Cause) CountAllNeighborsFollowingAGivenSequence(Func<Point, Point> calculateNextPoint, Point initialPoint, int initialAmount)
         {
             int runningTotal = initialAmount;
             Point nextPoint = calculateNextPoint(initialPoint);
-            while (IsPieceAtPoint(nextPoint) && _board[nextPoint].Color == _board[initialPoint].Color)
+            Cause cause = FindCauseOfEnding(nextPoint, initialPoint);
+            while (cause == Cause.None)
             {
                 runningTotal++;
                 nextPoint = calculateNextPoint(nextPoint);
+                cause = FindCauseOfEnding(nextPoint, initialPoint);
             }
 
-            return runningTotal;
+            return (runningTotal, cause);
+        }
+
+        private Cause FindCauseOfEnding(Point nextPoint, Point initialPoint)
+        {
+            Cause cause = Cause.None;
+            if (!IsPieceAtPoint(nextPoint))
+            {
+                cause = Cause.EmptySpace;
+            }
+            else if (_board[nextPoint].Color != _board[initialPoint].Color)
+            {
+                cause = Cause.OppositePiece;
+            }
+            return cause;
         }
 
         /// <summary>
