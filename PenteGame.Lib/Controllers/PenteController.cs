@@ -364,7 +364,7 @@ namespace PenteGame.Lib.Controllers
             {
                 Win?.Invoke(_board[originPoint].Color);
             }
-            else if(firstCause == Cause.EmptySpace && secondCause == Cause.EmptySpace)
+            else if (firstCause == Cause.EmptySpace && secondCause == Cause.EmptySpace)
             {
                 if (finalAmountFound == 4)
                 {
@@ -373,16 +373,56 @@ namespace PenteGame.Lib.Controllers
                 else if (finalAmountFound == 3)
                 {
                     Tria?.Invoke(_board[originPoint].Color);
-                }else
+                }
+                else
                 {
                     ProccessSpecialCaseTria(firstPattern, secondPattern, originPoint, finalAmountFound);
                 }
             }
         }
 
-        private void ProccessSpecialCaseTria(Func<Point, Point> firstPattern, Func<Point, Point> secondPattern, Point originPoint, int finalAmountFound)
+        private void ProccessSpecialCaseTria(Func<Point, Point> firstPattern, Func<Point, Point> secondPattern, Point originPoint, int amountFound)
         {
-           //TODO: special tria logic
+            if (amountFound > 1)
+            {
+                ProccessPairFound(firstPattern, secondPattern, originPoint);
+            }
+            else
+            {
+                FindPairInTheWild(firstPattern, secondPattern, originPoint);
+            }
+        }
+
+        private void FindPairInTheWild(Func<Point, Point> firstPattern, Func<Point, Point> secondPattern, Point originPoint)
+        {
+            var firstPoint = firstPattern(firstPattern(originPoint));
+            var secondPoint = secondPattern(secondPattern(originPoint));
+            if (IsFriendlyPoint(firstPoint, originPoint))
+            {
+                var pairPoint = firstPattern(firstPoint);
+                if(IsFriendlyPoint(pairPoint, originPoint))
+                {
+                    Tria?.Invoke(_board[originPoint].Color);
+                }
+            }
+            else if (IsFriendlyPoint(secondPoint, originPoint))
+            {
+                var pairPoint = secondPattern(secondPoint);
+                if (IsFriendlyPoint(pairPoint, originPoint))
+                {
+                    Tria?.Invoke(_board[originPoint].Color);
+                }
+            }
+        }
+
+        private bool IsFriendlyPoint(Point secondPoint, Point originPoint)
+        {
+            return IsPieceAtPoint(secondPoint) && _board[secondPoint].Color == _board[originPoint].Color;
+        }
+
+        private void ProccessPairFound(Func<Point, Point> firstPattern, Func<Point, Point> secondPattern, Point originPoint)
+        {
+
         }
 
         /// <summary>
