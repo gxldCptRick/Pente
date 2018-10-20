@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cause.cs" />
     <Compile Include="GameMode.cs" />
     <Compile Include="Controllers\PenteController.cs" />
     <Compile Include="Models\GamePiece.cs" />
