@@ -32,7 +32,6 @@ namespace PenteGame.Lib.Tests.Controllers
             Assert.IsTrue(IsOnBoard);
         }
 
-
         [TestMethod]
         public void Allow_The_First_Piece_To_Be_In_The_Center_Of_The_Board()
         {
@@ -143,6 +142,70 @@ namespace PenteGame.Lib.Tests.Controllers
 
             //assert
             Assert.IsTrue(isValidMove);
+        }
+
+        [TestMethod]
+        public void Second_Turn_Is_Three_Spaces_From_The_Center_Piece()
+        {
+            //black piece is the second turn
+            var game = StartGame();
+            bool isThreeSpacesAway = false;
+            Point whitePoint =  new Point(10, 10);
+            Point blackPoint = new Point(9, 12);
+            var blackColor = PieceColor.Black;
+            var whiteColor = PieceColor.White;
+
+            isThreeSpacesAway = game.TakeTurn(whitePoint, whiteColor);
+            isThreeSpacesAway = game.TakeTurn(blackPoint, blackColor);
+            Assert.IsTrue(isThreeSpacesAway);
+        }
+
+        [TestMethod]
+        public void Fail_If_Second_Turn_Is_Not_Three_Spaces_From_The_Center_Piece()
+        {
+            //black piece is the second turn
+            var game = StartGame();
+            bool isValidMove = false;
+            Point whitePoint = new Point(10, 10);
+            Point blackPoint = new Point(9, 8);
+            var blackColor = PieceColor.Black;
+            var whiteColor = PieceColor.White;
+
+            game.TakeTurn(whitePoint, whiteColor);
+            isValidMove = game.TakeTurn(blackPoint, blackColor);
+            Assert.IsFalse(isValidMove);
+        }
+
+        [TestMethod]
+        public void Pass_If_Second_Turn_Is_Greater_Than_Three_Spaces_From_The_Center_Piece_With_Respect_To_Y()
+        {
+            //black piece is the second turn
+            var game = StartGame();
+            bool isValidMove = false;
+            Point whitePoint = new Point(10, 10);
+            Point blackPoint = new Point(8, 5);
+            var blackColor = PieceColor.Black;
+            var whiteColor = PieceColor.White;
+
+            game.TakeTurn(whitePoint, whiteColor);
+            isValidMove = game.TakeTurn(blackPoint, blackColor);
+            Assert.IsTrue(isValidMove);
+        }
+
+        [TestMethod]
+        public void Pass_If_Second_Turn_Is_Greater_Than_Three_Spaces_From_The_Center_Piece_With_Respect_To_X()
+        {
+            //black piece is the second turn
+            var game = StartGame();
+            bool isValidMove = false;
+            Point whitePoint = new Point(10, 10);
+            Point blackPoint = new Point(10, 9);
+            var blackColor = PieceColor.Black;
+            var whiteColor = PieceColor.White;
+
+            game.TakeTurn(whitePoint, whiteColor);
+            isValidMove = game.TakeTurn(blackPoint, blackColor);
+            Assert.IsFalse(isValidMove);
         }
 
         #endregion
@@ -500,6 +563,7 @@ namespace PenteGame.Lib.Tests.Controllers
         private PenteController StartGame()
         {
             var newGame = new PenteController();
+            newGame.CurrentMode = GameMode.MultiPlayer;
             var point = new Point();
             point.x = 9;
             point.y = 9;

@@ -1,5 +1,7 @@
 ﻿using PenteGame.Lib.Controllers;
 using PenteGame.Lib.Enums;
+using System;
+using System.Windows;
 
 namespace PenteGame.ViewModels
 {
@@ -15,10 +17,18 @@ namespace PenteGame.ViewModels
         public int TimerCount
         {
             get => _timerCount;
-            set { _timerCount = value; PropertyChanging(); }
+            set
+            {
+                _timerCount = value;
+                if (value == 0)
+                {
+                    Game.SwitchTurn();
+                }
+                PropertyChanging();
+            }
         }
 
-        public PieceColor CurrentTurn { get => Game.CurrentTurn; }
+        public PieceColor CurrentTurn => Game.CurrentTurn;
 
         public PlayerData PlayerOne
         {
@@ -57,10 +67,39 @@ namespace PenteGame.ViewModels
             PlayerTwo = new PlayerData(PieceColor.White);
             PlayerTwo.Name = "Player Two";
             _mainGameController = new PenteController();
+            UpdateCaptureValues();
             _mainGameController.TurnChanging += TurnChanged;
+            Game.Tria += (color) => MessageBox.Show($"{TranslateColor(color)} has formed a tria");
+            Game.Tessara += (color) => MessageBox.Show($"{TranslateColor(color)} has formed a tessera");
         }
 
-        private void TurnChanged(PieceColor color) => PropertyChanging(nameof(CurrentTurn));
+        private string TranslateColor(PieceColor color)
+        {
+            return color == PieceColor.Black ? "gray" : "purple";
+        }
 
+        public void ResetGame()
+        {
+            Game.ResetGame();
+            UpdateCaptureValues();
+            TimerCount = 20;
+        }
+
+        public void ResetWinCount()
+        {
+            PlayerOne.NumberOfWins = 0;
+            PlayerTwo.NumberOfWins = 0;
+        }
+
+        public void UpdateCaptureValues()
+        {
+            PlayerOne.NumberOfCaptures = Game.GetTotalCaptures(PieceColor.Black);
+            PlayerTwo.NumberOfCaptures = Game.GetTotalCaptures(PieceColor.White);
+        }
+
+        private void TurnChanged(PieceColor color)
+        {
+            PropertyChanging(nameof(CurrentTurn));
+        }
     }
 }

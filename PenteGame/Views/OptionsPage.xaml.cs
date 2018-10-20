@@ -41,14 +41,13 @@ namespace PenteGame.Views
                 if (SinglePlayer.IsChecked.Value)
                 {
                     data.Game.CurrentMode = GameMode.SinglePlayer;
-                    data.Game.ResetGame();
                     data.PlayerTwo.Name = "Boopy";
                 }
                 else
                 {
                     data.Game.CurrentMode = GameMode.MultiPlayer;
-                    data.Game.ResetGame();
                 }
+                data.ResetGame();
             }
         }
     }
