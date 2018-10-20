@@ -19,6 +19,7 @@ namespace PenteGame.Lib.Controllers
         private int _height;
         private int _width;
         private bool _firstMoveHasBeenMade;
+        private bool _secondBlackMoveHasBeenMade;
         private bool gameIsOver;
         private PieceColor _currentTurn;
 
@@ -89,6 +90,7 @@ namespace PenteGame.Lib.Controllers
         {
             gameIsOver = false;
             _firstMoveHasBeenMade = false;
+            _secondBlackMoveHasBeenMade = false;
             CurrentTurn = PieceColor.Black;
             _captures[PieceColor.Black] = 0;
             _captures[PieceColor.White] = 0;
@@ -127,7 +129,6 @@ namespace PenteGame.Lib.Controllers
                 _firstMoveHasBeenMade = true;
                 isValidMove = true;
                 ProccessTurn(placement, color);
-
             }
             return isValidMove;
         }
@@ -144,12 +145,45 @@ namespace PenteGame.Lib.Controllers
             return IsPointOnBoard(placement) &&
                 !_board.ContainsKey(placement) &&
                 color == CurrentTurn &&
-                IsFirstMoveDone(placement, color);
+                CheckFirstMove(placement, color) &&
+                CheckSecondBlackMove(placement, color);
         }
 
-        private bool IsFirstMoveDone(Point placement, PieceColor color)
+        private bool CheckFirstMove(Point placement, PieceColor color)
         {
             return ((!_firstMoveHasBeenMade && CheckIfCenterPoint(placement)) || _firstMoveHasBeenMade);
+        }
+
+        //Check if the first move is done, second black turn is done, piece is black, & the move was valid
+        private bool CheckSecondBlackMove(Point placement, PieceColor color)
+        {
+            bool IsValidMove;
+            if (!_firstMoveHasBeenMade ||
+                _secondBlackMoveHasBeenMade ||
+                color != PieceColor.Black)
+            {
+                IsValidMove = true;
+            }
+            else
+            {
+                IsValidMove = IsSecondBlackMoveValid(placement);
+                _secondBlackMoveHasBeenMade = IsValidMove;
+            }
+            return IsValidMove;
+        }
+
+        //Horribly checks if the second player's turn is valid (3 spaces from center)
+        private bool IsSecondBlackMoveValid(Point placement)
+        {
+            Point center = GenerateCenter();
+            int threeGreaterAwayX = center.x + 3;
+            int threeLessAwayX = center.x - 3;
+            int threeGreaterAwayY = center.y + 3;
+            int threeLessAwayY = center.y - 3;
+            return (placement.x <= threeLessAwayX ||
+                placement.x >= threeGreaterAwayX ||
+                placement.y <= threeLessAwayY ||
+                placement.y >= threeGreaterAwayY);
         }
 
         public void RunComputerTurn()
@@ -432,7 +466,7 @@ namespace PenteGame.Lib.Controllers
             if (IsFriendlyPoint(firstPoint, originPoint))
             {
                 var pairPoint = firstPattern(firstPoint);
-                if(IsFriendlyPoint(pairPoint, originPoint))
+                if (IsFriendlyPoint(pairPoint, originPoint))
                 {
                     Tria?.Invoke(_board[originPoint].Color);
                 }

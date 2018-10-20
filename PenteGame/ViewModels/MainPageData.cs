@@ -85,6 +85,12 @@ namespace PenteGame.ViewModels
             TimerCount = 20;
         }
 
+        public void ResetWinCount()
+        {
+            PlayerOne.NumberOfWins = 0;
+            PlayerTwo.NumberOfWins = 0;
+        }
+
         public void UpdateCaptureValues()
         {
             PlayerOne.NumberOfCaptures = Game.GetTotalCaptures(PieceColor.Black);

@@ -43,13 +43,15 @@ namespace PenteGame.Views
         private static ImageBrush upperRight = new ImageBrush(new BitmapImage(new Uri(@"./Resources/UpperRight.png", UriKind.Relative)));
         private static ImageBrush lowerLeft = new ImageBrush(new BitmapImage(new Uri(@"./Resources/LowerLeft.png", UriKind.Relative)));
         private static ImageBrush lowerRight = new ImageBrush(new BitmapImage(new Uri(@"./Resources/LowerRight.png", UriKind.Relative)));
-        #endregion
+		private static ImageBrush middle = new ImageBrush(new BitmapImage(new Uri(@"./Resources/Middle.png", UriKind.Relative)));
+		#endregion
 
 
-        private void FillGrid()
+		private void FillGrid()
         {
             //Sets the grid size to the seleced options
             int GridSize = OptionsPage.GridSizeNum;
+			int middleNum = (int)Math.Ceiling((double)(OptionsPage.GridSizeNum/2));
             for (int i = 0; i < GridSize; i++)
             {
                 for (int j = 0; j < GridSize; j++)
@@ -64,39 +66,48 @@ namespace PenteGame.Views
                     //if it is the 0 index, or last for the first for loop, or if it is the first/last index for the second for floop, ir replaces the fill with a side image
                     if (i == 0)
                     {
-                        rect.Fill = topSide;
+                        if (j == 0)
+                        {
+                            rect.Fill = upperLeft;
+                        }
+                        else if (j == GridSize - 1)
+                        {
+                            rect.Fill = upperRight;
+                        }
+                        else
+                        {
+                            rect.Fill = topSide;
+
+                        }
                     }
-                    if (i == GridSize - 1)
+                    else if (i == GridSize - 1)
                     {
-                        rect.Fill = bottomSide;
+                        if (j == 0)
+                        {
+                            rect.Fill = lowerLeft;
+                        }
+                        else if (j == GridSize - 1)
+                        {
+                            rect.Fill = lowerRight;
+                        }
+                        else
+                        {
+                            rect.Fill = bottomSide;
+                        }
                     }
-                    if (j == 0)
+                    else if (j == 0)
                     {
                         rect.Fill = leftSide;
                     }
-                    if (j == GridSize - 1)
+                    else if (j == GridSize - 1)
                     {
                         rect.Fill = rightSide;
                     }
-
-                    //replaces corner with corner image
-                    //if it is the first or last index for both for loops, it sets the fill as the corner image
-                    if (i == 0 && j == 0)
-                    {
-                        rect.Fill = upperLeft;
-                    }
-                    if (i == 0 && j == GridSize - 1)
-                    {
-                        rect.Fill = upperRight;
-                    }
-                    if (i == GridSize - 1 && j == 0)
-                    {
-                        rect.Fill = lowerLeft;
-                    }
-                    if (i == GridSize - 1 && j == GridSize - 1)
-                    {
-                        rect.Fill = lowerRight;
-                    }
+					if (i == middleNum && j == middleNum)
+					{
+						rect.Fill = Brushes.MediumPurple;
+						rect.Stroke = Brushes.MediumPurple;
+					}
 
                     rect.MouseDown += (s, e) => AddPiece(s, e);
                     GameGrid.Children.Add(rect);
@@ -110,6 +121,7 @@ namespace PenteGame.Views
         {
             if (DataContext is MainPageData data)
             {
+                this.winningLabel.Content = $"|{data.PlayerOne.NumberOfWins} - {data.PlayerTwo.NumberOfWins}|";
                 //creating a timer if it is not already created
                 if (timer is null)
                 {
@@ -140,6 +152,7 @@ namespace PenteGame.Views
                         if (eve.PropertyName == nameof(data.CurrentTurn))
                         {
                             //timer.Stop();
+                            data.TimerCount = 20;
                             UpdateHighlight();
                             DrawPieces(data.Game.Pieces, data);
                         }
@@ -210,13 +223,13 @@ namespace PenteGame.Views
                 {
                     validMoveMade = data.Game.TakeTurn(positionOnScreen, data.CurrentTurn);
                 }
-                    DrawPieces(data.Game.Pieces, data);
-                    if (validMoveMade)
-                    {
-                        timer.Start();
-                        UpdateHighlight();
-                        data.Game.RunComputerTurn();
-                    }
+                DrawPieces(data.Game.Pieces, data);
+                if (validMoveMade)
+                {
+                    timer.Start();
+                    UpdateHighlight();
+                    data.Game.RunComputerTurn();
+                }
             }
         }
 
@@ -259,7 +272,11 @@ namespace PenteGame.Views
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
-            timer.Stop();
+        }
+
+        private void HelpButtonClicked(object sender, RoutedEventArgs e)
+        {
+            PageChangeRequested?.Invoke(PageRequest.Help);
         }
     }
 }
