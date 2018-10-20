@@ -261,7 +261,6 @@ namespace PenteGame.Views
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
-            timer.Stop();
         }
 
         private void HelpButtonClicked(object sender, RoutedEventArgs e)
