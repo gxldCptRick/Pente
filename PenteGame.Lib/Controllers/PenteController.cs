@@ -393,6 +393,38 @@ namespace PenteGame.Lib.Controllers
             }
         }
 
+        private void ProccessPairFound(Func<Point, Point> firstPattern, Func<Point, Point> secondPattern, Point originPoint)
+        {
+            var firstPoint = firstPattern(originPoint);
+            var secondPoint = secondPattern(originPoint);
+            if (IsFriendlyPoint(firstPoint, originPoint))
+            {
+                var pairPoint = firstPattern(firstPattern(firstPoint));
+                var otherPoint = secondPattern(secondPoint);
+                if (IsFriendlyPoint(pairPoint, originPoint))
+                {
+                    Tria?.Invoke(_board[originPoint].Color);
+                }
+                else if (IsFriendlyPoint(otherPoint, originPoint))
+                {
+                    Tria?.Invoke(_board[originPoint].Color);
+                }
+            }
+            else
+            {
+                var pairPoint = secondPattern(secondPattern(secondPoint));
+                var otherPoint = firstPattern(firstPoint);
+                if (IsFriendlyPoint(pairPoint, originPoint))
+                {
+                    Tria?.Invoke(_board[originPoint].Color);
+                }
+                else if (IsFriendlyPoint(otherPoint, originPoint))
+                {
+                    Tria?.Invoke(_board[originPoint].Color);
+                }
+            }
+        }
+
         private void FindPairInTheWild(Func<Point, Point> firstPattern, Func<Point, Point> secondPattern, Point originPoint)
         {
             var firstPoint = firstPattern(firstPattern(originPoint));
@@ -418,11 +450,6 @@ namespace PenteGame.Lib.Controllers
         private bool IsFriendlyPoint(Point secondPoint, Point originPoint)
         {
             return IsPieceAtPoint(secondPoint) && _board[secondPoint].Color == _board[originPoint].Color;
-        }
-
-        private void ProccessPairFound(Func<Point, Point> firstPattern, Func<Point, Point> secondPattern, Point originPoint)
-        {
-
         }
 
         /// <summary>
