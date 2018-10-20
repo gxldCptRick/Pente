@@ -30,8 +30,8 @@
                     <RowDefinition/>
                     <!--<RowDefinition/>-->
                 </Grid.RowDefinitions>
-                <Label FontSize="25" x:Name="timerLabel" Grid.Row="0" Content="{Binding Path=TimerCount}" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center"></Label>
-                <Label Grid.Row="1" Name="winningLabel" Content="|100 - - 0|" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center"></Label>
+                <Label FontSize="25" x:Name="timerLabel" Foreground="MediumPurple" Grid.Row="0" Content="{Binding Path=TimerCount}" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center"></Label>
+                <Label Grid.Row="1" Name="winningLabel" Foreground="MediumPurple" Content="|100 - - 0|" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center"></Label>
             </Grid>
             <Button BorderBrush="#87A885" BorderThickness="2.3" Background="#C4C4BD" Margin="60, 20" FontSize="20" Content="Reset" Foreground="MediumPurple"  Click="ResetButton"/>
             <Button Grid.Column="2" BorderBrush="#87A885" BorderThickness="2.3" Background="#C4C4BD" Margin="60, 20" FontSize="20" Content="Halp" Foreground="MediumPurple" Click="HelpButtonClicked"/>
