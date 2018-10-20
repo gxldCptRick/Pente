@@ -263,5 +263,10 @@ namespace PenteGame.Views
         {
             timer.Stop();
         }
+
+        private void HelpButtonClicked(object sender, RoutedEventArgs e)
+        {
+            PageChangeRequested?.Invoke(PageRequest.Help);
+        }
     }
 }

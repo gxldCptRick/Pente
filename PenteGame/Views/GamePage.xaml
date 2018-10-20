@@ -34,6 +34,7 @@
                 <Label Grid.Row="1" Content="|100 - - 0|" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center"></Label>
             </Grid>
             <Button BorderBrush="#87A885" BorderThickness="2.3" Background="#C4C4BD" Margin="60, 20" FontSize="20" Content="Reset" Foreground="MediumPurple"  Click="ResetButton"/>
+            <Button Grid.Column="2" BorderBrush="#87A885" BorderThickness="2.3" Background="#C4C4BD" Margin="60, 20" FontSize="20" Content="Halp" Foreground="MediumPurple" Click="HelpButtonClicked"/>
         </Grid>
         <Grid Name="BoardGrid" Grid.Row="1">
             <Grid.ColumnDefinitions>
