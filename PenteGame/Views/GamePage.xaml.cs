@@ -43,13 +43,15 @@ namespace PenteGame.Views
         private static ImageBrush upperRight = new ImageBrush(new BitmapImage(new Uri(@"./Resources/UpperRight.png", UriKind.Relative)));
         private static ImageBrush lowerLeft = new ImageBrush(new BitmapImage(new Uri(@"./Resources/LowerLeft.png", UriKind.Relative)));
         private static ImageBrush lowerRight = new ImageBrush(new BitmapImage(new Uri(@"./Resources/LowerRight.png", UriKind.Relative)));
-        #endregion
+		private static ImageBrush middle = new ImageBrush(new BitmapImage(new Uri(@"./Resources/Middle.png", UriKind.Relative)));
+		#endregion
 
 
-        private void FillGrid()
+		private void FillGrid()
         {
             //Sets the grid size to the seleced options
             int GridSize = OptionsPage.GridSizeNum;
+			int middleNum = (int)Math.Ceiling((double)(OptionsPage.GridSizeNum/2));
             for (int i = 0; i < GridSize; i++)
             {
                 for (int j = 0; j < GridSize; j++)
@@ -98,7 +100,11 @@ namespace PenteGame.Views
                     {
                         rect.Fill = rightSide;
                     }
-
+					if (i == middleNum && j == middleNum)
+					{
+						rect.Fill = Brushes.MediumPurple;
+						rect.Stroke = Brushes.MediumPurple;
+					}
 
                     rect.MouseDown += (s, e) => AddPiece(s, e);
                     GameGrid.Children.Add(rect);
