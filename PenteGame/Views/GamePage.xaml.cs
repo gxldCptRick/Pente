@@ -59,42 +59,45 @@ namespace PenteGame.Views
                     {
                         Fill = intersection
                     };
-					
+
                     //Replaces fill with side image
                     //if it is the 0 index, or last for the first for loop, or if it is the first/last index for the second for floop, ir replaces the fill with a side image
                     if (i == 0)
                     {
-						if (j == 0)
-						{
-							rect.Fill = upperLeft;
-						}
-						else if (j == GridSize - 1)
-						{
-							rect.Fill = upperRight;
-						}
-						else
-						{
-							rect.Fill = topSide;
+                        if (j == 0)
+                        {
+                            rect.Fill = upperLeft;
+                        }
+                        else if (j == GridSize - 1)
+                        {
+                            rect.Fill = upperRight;
+                        }
+                        else
+                        {
+                            rect.Fill = topSide;
 
-						}
-                    }else if (i == GridSize - 1)
+                        }
+                    }
+                    else if (i == GridSize - 1)
                     {
-						if (j == 0)
-						{
-							rect.Fill = lowerLeft;
-						}
-						else if (j == GridSize - 1)
-						{
-							rect.Fill = lowerRight;
-						}
-						else
-						{
-							rect.Fill = bottomSide;
-						}
-                    }else if (j == 0)
+                        if (j == 0)
+                        {
+                            rect.Fill = lowerLeft;
+                        }
+                        else if (j == GridSize - 1)
+                        {
+                            rect.Fill = lowerRight;
+                        }
+                        else
+                        {
+                            rect.Fill = bottomSide;
+                        }
+                    }
+                    else if (j == 0)
                     {
                         rect.Fill = leftSide;
-                    }else if (j == GridSize - 1)
+                    }
+                    else if (j == GridSize - 1)
                     {
                         rect.Fill = rightSide;
                     }
@@ -112,6 +115,7 @@ namespace PenteGame.Views
         {
             if (DataContext is MainPageData data)
             {
+                this.winningLabel.Content = $"|{data.PlayerOne.NumberOfWins} - {data.PlayerTwo.NumberOfWins}|";
                 //creating a timer if it is not already created
                 if (timer is null)
                 {
@@ -142,6 +146,7 @@ namespace PenteGame.Views
                         if (eve.PropertyName == nameof(data.CurrentTurn))
                         {
                             //timer.Stop();
+                            data.TimerCount = 20;
                             UpdateHighlight();
                             DrawPieces(data.Game.Pieces, data);
                         }
@@ -212,13 +217,13 @@ namespace PenteGame.Views
                 {
                     validMoveMade = data.Game.TakeTurn(positionOnScreen, data.CurrentTurn);
                 }
-                    DrawPieces(data.Game.Pieces, data);
-                    if (validMoveMade)
-                    {
-                        timer.Start();
-                        UpdateHighlight();
-                        data.Game.RunComputerTurn();
-                    }
+                DrawPieces(data.Game.Pieces, data);
+                if (validMoveMade)
+                {
+                    timer.Start();
+                    UpdateHighlight();
+                    data.Game.RunComputerTurn();
+                }
             }
         }
 
