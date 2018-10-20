@@ -500,6 +500,7 @@ namespace PenteGame.Lib.Tests.Controllers
         private PenteController StartGame()
         {
             var newGame = new PenteController();
+            newGame.CurrentMode = GameMode.MultiPlayer;
             var point = new Point();
             point.x = 9;
             point.y = 9;

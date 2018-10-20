@@ -31,6 +31,7 @@ namespace PenteGame.Views
             if (DataContext is MainPageData data)
             {
                 data.ResetGame();
+                data.ResetWinCount();
             }
 
             PageChangeRequested.Invoke(PageRequest.Main);
@@ -53,11 +54,13 @@ namespace PenteGame.Views
                 switch (data.Game.CurrentTurn)
                 {
                     case Lib.Enums.PieceColor.Black:
+                        data.PlayerOne.NumberOfWins++;
                         winnerLabel.Content = $"{data.PlayerOne.Name} Wins!";
                         winnerLabel.Foreground = fightMEDean.Convert(PieceColor.Black, null, null, null) as Brush;
                         winnerLabel.Background = fightMEDean.Convert(PieceColor.White, null, null, null) as Brush;
                         break;
                     case Lib.Enums.PieceColor.White:
+                        data.PlayerTwo.NumberOfWins++;
                         winnerLabel.Content = $"{data.PlayerTwo.Name} Wins!";
                         winnerLabel.Foreground = fightMEDean.Convert(PieceColor.White, null, null, null) as Brush;
                         winnerLabel.Background = fightMEDean.Convert(PieceColor.Black, null, null, null) as Brush;

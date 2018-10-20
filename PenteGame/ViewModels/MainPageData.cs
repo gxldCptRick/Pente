@@ -1,5 +1,7 @@
 ﻿using PenteGame.Lib.Controllers;
 using PenteGame.Lib.Enums;
+using System;
+using System.Windows;
 
 namespace PenteGame.ViewModels
 {
@@ -67,6 +69,13 @@ namespace PenteGame.ViewModels
             _mainGameController = new PenteController();
             UpdateCaptureValues();
             _mainGameController.TurnChanging += TurnChanged;
+            Game.Tria += (color) => MessageBox.Show($"{TranslateColor(color)} has formed a tria");
+            Game.Tessara += (color) => MessageBox.Show($"{TranslateColor(color)} has formed a tessera");
+        }
+
+        private string TranslateColor(PieceColor color)
+        {
+            return color == PieceColor.Black ? "gray" : "purple";
         }
 
         public void ResetGame()
@@ -74,6 +83,12 @@ namespace PenteGame.ViewModels
             Game.ResetGame();
             UpdateCaptureValues();
             TimerCount = 20;
+        }
+
+        public void ResetWinCount()
+        {
+            PlayerOne.NumberOfWins = 0;
+            PlayerTwo.NumberOfWins = 0;
         }
 
         public void UpdateCaptureValues()
