@@ -64,13 +64,14 @@ namespace PenteGame.Lib.Controllers
         public event Action<PieceColor> Tria;
         public event Action<PieceColor> Win;
         public event Action<PieceColor> Capture;
-
+        public event Action<Point> ComputerTurnMade;
         public PenteController()
         {
             _board = new Dictionary<Point, GamePiece>();
             _captures = new Dictionary<PieceColor, int>();
             Width = 19;
             Height = 19;
+            PiecesToBeRemoved = new List<Point>();
             CurrentMode = GameMode.SinglePlayer;
             Capture += (color) =>
             {
@@ -78,6 +79,10 @@ namespace PenteGame.Lib.Controllers
                 if (_captures[color] >= 5)
                 {
                     Win?.Invoke(color);
+                }
+                foreach (var piece in PiecesToBeRemoved)
+                {
+                    _board.Remove(piece);
                 }
             };
             Win += (color) => gameIsOver = true;
@@ -202,12 +207,14 @@ namespace PenteGame.Lib.Controllers
                     } while (!IsValidMove(placement, PieceColor.White));
                     Thread.Sleep(1000);
                     ProccessTurn(placement, PieceColor.White);
+                    ComputerTurnMade?.Invoke(placement);
                 });
             }
         }
 
         //It's rnJesus my dude 
         private Random rnJesus = new Random();
+        public List<Point> PiecesToBeRemoved;
 
         //Generate a random point for Boopy the AI
         private Point GeneratePoint()
@@ -382,8 +389,8 @@ namespace PenteGame.Lib.Controllers
             int totalFound = CountHowManyFollowCapturePattern(originPoint, calculateNextPoint);
             if (totalFound == MaxDistanceForCapture)
             {
-                _board.Remove(calculateNextPoint(originPoint, 1));
-                _board.Remove(calculateNextPoint(originPoint, 2));
+                PiecesToBeRemoved.Add(calculateNextPoint(originPoint, 1));
+                PiecesToBeRemoved.Add(calculateNextPoint(originPoint, 2));
                 Capture?.Invoke(_board[originPoint].Color);
             }
         }

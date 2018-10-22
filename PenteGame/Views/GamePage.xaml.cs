@@ -43,11 +43,10 @@ namespace PenteGame.Views
         private static ImageBrush upperRight = new ImageBrush(new BitmapImage(new Uri(@"./Resources/UpperRight.png", UriKind.Relative)));
         private static ImageBrush lowerLeft = new ImageBrush(new BitmapImage(new Uri(@"./Resources/LowerLeft.png", UriKind.Relative)));
         private static ImageBrush lowerRight = new ImageBrush(new BitmapImage(new Uri(@"./Resources/LowerRight.png", UriKind.Relative)));
-		private static ImageBrush middle = new ImageBrush(new BitmapImage(new Uri(@"./Resources/Middle.png", UriKind.Relative)));
-		#endregion
+        #endregion
 
 
-		private void FillGrid()
+        private void FillGrid()
         {
             //Sets the grid size to the seleced options
             int GridSize = OptionsPage.GridSizeNum;
@@ -104,11 +103,11 @@ namespace PenteGame.Views
                     {
                         rect.Fill = rightSide;
                     }
-					if (i == middleNum && j == middleNum)
-					{
-						rect.Fill = Brushes.MediumPurple;
-						rect.Stroke = Brushes.MediumPurple;
-					}
+                    if (i == middleNum && j == middleNum)
+                    {
+                        rect.Fill = Brushes.MediumPurple;
+                        rect.Stroke = Brushes.MediumPurple;
+                    }
 
                     rect.MouseDown += (s, e) => AddPiece(s, e);
                     GameGrid.Children.Add(rect);
@@ -122,7 +121,7 @@ namespace PenteGame.Views
         {
             if (DataContext is MainPageData data)
             {
-                this.winningLabel.Content = $"|{data.PlayerOne.NumberOfWins} - {data.PlayerTwo.NumberOfWins}|";
+                winningLabel.Content = $"|{data.PlayerOne.NumberOfWins} - {data.PlayerTwo.NumberOfWins}|";
                 //creating a timer if it is not already created
                 if (timer is null)
                 {
@@ -141,11 +140,13 @@ namespace PenteGame.Views
                     //setting up for captures
                     data.Game.Capture += (color) =>
                     {
-                        DrawPieces(data.Game.Pieces, data);
+                        RemovePieces(data.Game.PiecesToBeRemoved);
                         data.UpdateCaptureValues();
+                        data.Game.PiecesToBeRemoved.Clear();
                     };
-                    //setting up for all the main events in the game.
 
+                    data.Game.ComputerTurnMade += (point) => Dispatcher.Invoke(() => DrawPiece(FindRectangle(point), PieceColor.White));
+                    
                     data.Game.Win += (color) => PageChangeRequested?.Invoke(PageRequest.GameOver);
                     //hijacking the property changed event in order to update the highlight and stop the timer when we change the current turn.
                     data.PropertyChanged += (s, eve) =>
@@ -155,9 +156,46 @@ namespace PenteGame.Views
                             //timer.Stop();
                             data.TimerCount = 20;
                             UpdateHighlight();
-                            DrawPieces(data.Game.Pieces, data);
                         }
                     };
+                }
+            }
+        }
+
+        private Rectangle FindRectangle(Point point)
+        {
+            int index = point.y * (DataContext as MainPageData).GridSize + point.x;
+            return GameGrid.Children[index] as Rectangle;
+        }
+
+        private void RemovePieces(List<Point> piecesToBeRemoved)
+        {
+            if (DataContext is MainPageData data)
+            {
+                foreach (var piece in piecesToBeRemoved)
+                {
+                    Brush brush = null;
+                    if (piece.x == 0)
+                    {
+                        brush = GamePage.leftSide;
+                    }
+                    else if (piece.y == 0)
+                    {
+                        brush = GamePage.topSide;
+                    }
+                    else if (piece.x == data.GridSize - 1)
+                    {
+                        brush = GamePage.rightSide;
+                    }
+                    else if (piece.y == data.GridSize - 1)
+                    {
+                        brush = GamePage.bottomSide;
+                    }
+                    else
+                    {
+                        brush = GamePage.intersection;
+                    }
+                    FindRectangle(piece).Fill = brush;
                 }
             }
         }
@@ -216,6 +254,7 @@ namespace PenteGame.Views
             {
                 bool validMoveMade;
                 Point positionOnScreen = GetPosition(rect);
+                var currentColor = data.CurrentTurn;
                 if (data.Game.CurrentMode == GameMode.SinglePlayer)
                 {
                     validMoveMade = data.Game.TakeTurn(positionOnScreen, data.PlayerOne.Color);
@@ -224,14 +263,19 @@ namespace PenteGame.Views
                 {
                     validMoveMade = data.Game.TakeTurn(positionOnScreen, data.CurrentTurn);
                 }
-                DrawPieces(data.Game.Pieces, data);
                 if (validMoveMade)
                 {
+                    DrawPiece(rect, currentColor);
                     timer.Start();
                     UpdateHighlight();
                     data.Game.RunComputerTurn();
                 }
             }
+        }
+
+        private void DrawPiece(Rectangle rect, PieceColor currentColor)
+        {
+            rect.Fill = currentColor == PieceColor.Black ? gray : purple; 
         }
 
         private Point GetPosition(Rectangle rect)
@@ -251,8 +295,14 @@ namespace PenteGame.Views
             if (DataContext is MainPageData data)
             {
                 data.ResetGame();
-                DrawPieces(data.Game.Pieces, data);
+                DrawBoard();
             }
+        }
+
+        private void DrawBoard()
+        {
+            this.GameGrid.Children.Clear();
+            FillGrid();
         }
 
         //Counts the timer down. Resets the timer and switches the turn if it hits zero
@@ -275,6 +325,7 @@ namespace PenteGame.Views
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
+            timer.Stop();
         }
 
         //Opens the help window again
