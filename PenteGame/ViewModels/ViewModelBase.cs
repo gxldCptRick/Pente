@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PenteGame.ViewModels
 {
-    abstract class ViewModelBase : INotifyPropertyChanged
+    abstract class ViewModelBase : INotifyPropertyChanged //An Event to see if a property changed.
     {
         public event PropertyChangedEventHandler PropertyChanged;
         

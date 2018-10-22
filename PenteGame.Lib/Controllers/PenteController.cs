@@ -58,6 +58,7 @@ namespace PenteGame.Lib.Controllers
         }
         public IEnumerable<GamePiece> Pieces => _board.Values;
 
+        //Some lovely events for the board
         public event Action<PieceColor> TurnChanging;
         public event Action<PieceColor> Tessara;
         public event Action<PieceColor> Tria;
@@ -133,6 +134,7 @@ namespace PenteGame.Lib.Controllers
             return isValidMove;
         }
 
+        //All of this is handling turn orders depending on conditions
         private void ProccessTurn(Point placement, PieceColor color)
         {
             _board[placement] = new GamePiece(placement, color);
@@ -186,6 +188,7 @@ namespace PenteGame.Lib.Controllers
                 placement.y >= threeGreaterAwayY);
         }
 
+        //If the game isn't over, it's the white players turn, and the game mode is single player, then run the AI's turn
         public void RunComputerTurn()
         {
             if (!gameIsOver && CurrentTurn == PieceColor.White && CurrentMode == GameMode.SinglePlayer)
@@ -203,8 +206,10 @@ namespace PenteGame.Lib.Controllers
             }
         }
 
+        //It's rnJesus my dude 
         private Random rnJesus = new Random();
 
+        //Generate a random point for Boopy the AI
         private Point GeneratePoint()
         {
             return new Point()
@@ -225,6 +230,7 @@ namespace PenteGame.Lib.Controllers
             return center == pointInQuestion;
         }
 
+        //Finds the center point of any sized board
         public Point GenerateCenter()
         {
             return new Point(Width / 2, Height / 2);
@@ -415,6 +421,7 @@ namespace PenteGame.Lib.Controllers
             }
         }
 
+        //Checks for a special case tria
         private void ProccessSpecialCaseTria(Func<Point, Point> firstPattern, Func<Point, Point> secondPattern, Point originPoint, int amountFound)
         {
             if (amountFound > 1)
@@ -427,6 +434,7 @@ namespace PenteGame.Lib.Controllers
             }
         }
 
+        //something with trias ._.
         private void ProccessPairFound(Func<Point, Point> firstPattern, Func<Point, Point> secondPattern, Point originPoint)
         {
             var firstPoint = firstPattern(originPoint);
@@ -459,6 +467,7 @@ namespace PenteGame.Lib.Controllers
             }
         }
 
+        //Checks neighboring points using IsFriendlyPoint and invokes a Tria event
         private void FindPairInTheWild(Func<Point, Point> firstPattern, Func<Point, Point> secondPattern, Point originPoint)
         {
             var firstPoint = firstPattern(firstPattern(originPoint));
@@ -481,6 +490,7 @@ namespace PenteGame.Lib.Controllers
             }
         }
 
+        //Checks if a neighboring point is the same color as the one just placed
         private bool IsFriendlyPoint(Point secondPoint, Point originPoint)
         {
             return IsPieceAtPoint(secondPoint) && _board[secondPoint].Color == _board[originPoint].Color;

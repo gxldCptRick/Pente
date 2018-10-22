@@ -21,11 +21,13 @@ namespace PenteGame.Views
 
         public event Action<PageRequest> PageChangeRequested;
 
+        //Closes the application
         private void ExitButtonClicked(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
         }
 
+        //Takes the player back to the Main Menu page
         private void NewGameButtonClicked(object sender, RoutedEventArgs e)
         {
             if (DataContext is MainPageData data)
@@ -37,6 +39,7 @@ namespace PenteGame.Views
             PageChangeRequested.Invoke(PageRequest.Main);
         }
 
+        //Restarts the game with the same options and a win counter
         private void RestartButtonClicked(object sender, RoutedEventArgs e)
         {
             if (DataContext is MainPageData data)
@@ -46,6 +49,7 @@ namespace PenteGame.Views
             PageChangeRequested.Invoke(PageRequest.Game);
         }
 
+        //Sets up the winner based on turn/player that made the winning move
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             if (DataContext is MainPageData data)

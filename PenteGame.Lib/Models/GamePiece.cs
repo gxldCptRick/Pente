@@ -7,17 +7,20 @@ using System.Threading.Tasks;
 
 namespace PenteGame.Lib.Models
 {
-    public class GamePiece: IEquatable<GamePiece>
+    public class GamePiece: IEquatable<GamePiece> //Class to represent the game piece
     {
+        //point and color of the game piece
         public Point Point { get; private set; }
         public PieceColor Color { get; private set; }
 
+        //ctor
         public GamePiece(Point point, PieceColor color)
         {
             this.Color = color;
             this.Point = point;
         }
 
+        //Another lovely ToString
         public override string ToString()
         {
             return $"{this.Color} {this.Point}";
@@ -29,6 +32,7 @@ namespace PenteGame.Lib.Models
             return Point.GetHashCode() ^ Color.GetHashCode();
         }
 
+        //A beautiful override
         public override bool Equals(object obj)
         {
             if (obj is null) return false;

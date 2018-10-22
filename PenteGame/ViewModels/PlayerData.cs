@@ -2,13 +2,14 @@
 
 namespace PenteGame.ViewModels
 {
-    internal class PlayerData : ViewModelBase
+    internal class PlayerData : ViewModelBase //Data that a player has
     {
         private int _numberOfCaptures;
         private int _numberOfWins;
         private string _name;
         private PieceColor _color;
 
+        //Getters and Setters for each player property
         public string Name
         {
             get => _name;

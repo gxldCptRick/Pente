@@ -22,18 +22,21 @@ namespace PenteGame.Views
 
         public event Action<PageRequest> PageChangeRequested;
 
+        //Goes to the game window
         private void StartGame(object sender, RoutedEventArgs e)
         {
             PageChangeRequested?.Invoke(PageRequest.Game);
 
         }
 
+        //Gets the size of the game board
         private void GridSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             Slider slid = (Slider)sender;
             GridSizeNum = (int)slid.Value;
         }
 
+        //Sets up the game mode
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
             if (DataContext is MainPageData data)

@@ -28,17 +28,20 @@ namespace PenteGame.Views
 
         public event Action<PageRequest> PageChangeRequested;
 
+        //Exits the application
         private void ExitButtonClicked(object sender, RoutedEventArgs e)
         {
 
             Application.Current.Shutdown();
         }
 
+        //Goes to the options page 
         private void StartButtonClicked(object sender, RoutedEventArgs e)
         {
             this.PageChangeRequested?.Invoke(PageRequest.Options);
         }
 
+        //Opens up the help window
         private void HelpButtonClicked(object sender, RoutedEventArgs e)
         {
             this.PageChangeRequested?.Invoke(PageRequest.Help);

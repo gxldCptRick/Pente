@@ -52,6 +52,7 @@ namespace PenteGame.Views
             //Sets the grid size to the seleced options
             int GridSize = OptionsPage.GridSizeNum;
 			int middleNum = (int)Math.Ceiling((double)(OptionsPage.GridSizeNum/2));
+            //Disgustingly populates our grid
             for (int i = 0; i < GridSize; i++)
             {
                 for (int j = 0; j < GridSize; j++)
@@ -244,6 +245,7 @@ namespace PenteGame.Views
             return coord;
         }
 
+        //Restarts the game back to turn 1
         private void ResetButton(object sender, RoutedEventArgs e)
         {
             if (DataContext is MainPageData data)
@@ -253,6 +255,7 @@ namespace PenteGame.Views
             }
         }
 
+        //Counts the timer down. Resets the timer and switches the turn if it hits zero
         private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
             Dispatcher.Invoke(() =>
@@ -274,6 +277,7 @@ namespace PenteGame.Views
         {
         }
 
+        //Opens the help window again
         private void HelpButtonClicked(object sender, RoutedEventArgs e)
         {
             PageChangeRequested?.Invoke(PageRequest.Help);

@@ -24,6 +24,7 @@ namespace PenteGame.Views
     {
         private static readonly Uri linkToAwesomeHTMLPageThatWeTotallyDidntStealThisNameWillBeChangedBeforeProbablyUmmYeah;
 
+        //Totally not stealing an html for the help
         static HelpPage()
         {
             linkToAwesomeHTMLPageThatWeTotallyDidntStealThisNameWillBeChangedBeforeProbablyUmmYeah = new Uri(Directory.GetCurrentDirectory() + "/Resources/HowToPlay.html");
